@@ -631,4 +631,19 @@
   updateChrome();
   revealScreen(screens[current]);
   if (screens[current]._onEnter) screens[current]._onEnter();
+
+  /* ---------- DEV/QA postMessage bridge (figma-lomda-builder convention) ----------
+     The QA/preview host embeds this lomda in an iframe and discovers the page count
+     via a handshake: the lomda posts { type:'DEV_READY', total:N } and accepts
+     { type:'DEV_GOTO', screen:n } to navigate. Without this the QA reports 0 pages. */
+  function announceReady() {
+    try { window.parent.postMessage({ type: 'DEV_READY', total: screens.length }, '*'); } catch (e) {}
+  }
+  window.addEventListener('message', function (e) {
+    var d = e && e.data || {};
+    if (d.type === 'DEV_GOTO' && typeof d.screen === 'number') { goTo(d.screen); }
+    else { announceReady(); }   // any other ping → re-announce the screen count
+  });
+  announceReady();
+  window.addEventListener('load', announceReady);
 })();
