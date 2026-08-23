@@ -28,10 +28,10 @@
     if (i < 0 || i >= screens.length) return;
     Array.prototype.forEach.call(document.querySelectorAll('audio'), function (a) { try { a.pause(); } catch (e) {} });
     if (screens[current]._onLeave) screens[current]._onLeave();
-    screens[current].classList.remove('is-active');
+    screens[current].classList.remove('active');
     screens[current].setAttribute('aria-hidden', 'true');
     current = i;
-    screens[current].classList.add('is-active');
+    screens[current].classList.add('active');
     screens[current].setAttribute('aria-hidden', 'false');
     if (btnFwd) btnFwd.classList.remove('nav-pulse');
     updateChrome();
@@ -394,7 +394,7 @@
       var t = audio ? audio.currentTime : 0;
       cards.forEach(function (c) { if (t >= (REVEAL[c.getAttribute('data-key')] || 0)) c.classList.add('in'); });
       setCap(t);
-      if (audio && !audio.paused && !audio.ended && screen.classList.contains('is-active')) raf = requestAnimationFrame(tick);
+      if (audio && !audio.paused && !audio.ended && screen.classList.contains('active')) raf = requestAnimationFrame(tick);
     }
     function startLoop() { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); }
 
@@ -438,7 +438,7 @@
         } catch (e) {}
       }
       // backstop: if the audio never runs (blocked), reveal cards after the clip length so the learner can still explore
-      setTimeout(function () { if (screen.classList.contains('is-active') && (!audio || audio.currentTime < 0.2)) revealAll(); }, 16500);
+      setTimeout(function () { if (screen.classList.contains('active') && (!audio || audio.currentTime < 0.2)) revealAll(); }, 16500);
     };
     screen._onLeave = function () { if (raf) cancelAnimationFrame(raf); };
   }
@@ -488,7 +488,7 @@
     }
     function tick() {
       setCap(v.currentTime); syncBar();
-      if (!v.paused && !v.ended && screen.classList.contains('is-active')) raf = requestAnimationFrame(tick);
+      if (!v.paused && !v.ended && screen.classList.contains('active')) raf = requestAnimationFrame(tick);
     }
     function play() { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
 
@@ -606,10 +606,10 @@
   if (hm) {
     for (var hi = 0; hi < screens.length; hi++) {
       if (screens[hi].getAttribute('data-screen') === hm[1]) {
-        screens[current].classList.remove('is-active');
+        screens[current].classList.remove('active');
         screens[current].setAttribute('aria-hidden', 'true');
         current = hi;
-        screens[hi].classList.add('is-active');
+        screens[hi].classList.add('active');
         screens[hi].setAttribute('aria-hidden', 'false');
         break;
       }

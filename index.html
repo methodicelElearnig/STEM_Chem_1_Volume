@@ -12,7 +12,7 @@
 <div id="stage" class="stage" role="main" aria-label="לומדת נפח">
 
   <!-- ===== SCREEN 2 — opening video (play-button start, synced captions, forward gated until watched) ===== -->
-  <section class="screen is-active" data-screen="1" data-type="video" data-gate="video" aria-hidden="false">
+  <section class="screen active" data-screen="0" data-type="video" data-gate="video" aria-hidden="false">
     <div class="videoscreen">
       <video class="video-el" src="assets/video/Chem1_Video1.mp4" playsinline preload="auto"></video>
       <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
@@ -37,7 +37,7 @@
   </section>
 
   <!-- ===== SCREEN 3 — mission briefing video (Gal + Shira talking heads) ===== -->
-  <section class="screen" data-screen="2" data-type="video" data-gate="video" aria-hidden="true">
+  <section class="screen" data-screen="1" data-type="video" data-gate="video" aria-hidden="true">
     <div class="videoscreen">
       <video class="video-el" src="assets/video/Chem1_Video3.mp4?v=2" playsinline preload="auto"></video>
       <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
@@ -64,7 +64,7 @@
   </section>
 
   <!-- ===== SCREENS 5-6 — sample explorer (narration + card reveal + flip cards) ===== -->
-  <section class="screen" data-screen="3" data-type="content" data-gate="explore" aria-hidden="true">
+  <section class="screen" data-screen="2" data-type="content" data-gate="explore" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-5b.png?v=1" alt="מעבדת ירח, ארבע דגימות סלע ירחי להיכרות">
     <audio src="assets/Video2_Shira_narration.mp3" preload="auto"></audio>
     <div class="bubble" data-reveal data-reveal-order="1" style="left:1364px; top:0px; width:556px; height:139px;">
@@ -132,7 +132,7 @@
   </section>
 
   <!-- ===== SCREEN 9 — content ===== -->
-  <section class="screen" data-screen="4" data-type="content" aria-hidden="true">
+  <section class="screen" data-screen="3" data-type="content" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-9.png?v=2"
          alt="שירה במעבדה מציגה שלוש דגימות: סלע, כלי מים ושפופרת גז">
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
@@ -144,7 +144,7 @@
   </section>
 
   <!-- ===== SCREEN 10 — question Q1 (sentence-length options) ===== -->
-  <section class="screen" data-screen="5" data-type="question" data-qid="q1" data-answer="4" data-points="12.5"
+  <section class="screen" data-screen="4" data-type="question" data-qid="q1" data-answer="4" data-points="12.5"
            data-fb-correct="תפיסת מקום במרחב (נפח) היא תכונה של כל חומר בטבע. לא משנה אם הוא מוצק קשיח כמו סלע, נוזל שזורם כמו מים, או גז שקוף ובלתי נראה – כולם תופסים מקום."
            data-fb-incorrect="תפיסת מקום במרחב (נפח) היא תכונה של כל חומר בטבע. לא משנה אם הוא מוצק קשיח כמו סלע, נוזל שזורם כמו מים, או גז שקוף ובלתי נראה – כולם תופסים מקום."
            aria-hidden="true">
@@ -176,7 +176,7 @@
   </section>
 
   <!-- ===== SCREEN 12 — gas has volume (syringe) ===== -->
-  <section class="screen" data-screen="6" data-type="content" aria-hidden="true">
+  <section class="screen" data-screen="5" data-type="content" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-12.png"
          alt="ידיים אוחזות מזרק אטום מלא באוויר, הדגמה שלגז יש נפח">
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
@@ -188,7 +188,7 @@
   </section>
 
   <!-- ===== SCREEN 13 — content ===== -->
-  <section class="screen" data-screen="7" data-type="content" aria-hidden="true">
+  <section class="screen" data-screen="6" data-type="content" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-13.png?v=3"
          alt="שירה במעבדת ירח, לצידה משורה מדורגת ודגימת סלע אנורתוזיט על השולחן">
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
@@ -200,7 +200,7 @@
   </section>
 
   <!-- ===== SCREEN 14 — applet ===== -->
-  <section class="screen" data-screen="8" data-type="applet" aria-hidden="true">
+  <section class="screen" data-screen="7" data-type="applet" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-14.png?v=4"
          alt="מעבדת ירח, בועית הסבר של שירה ולוח היישומון למדידת נפח בדחיקת מים">
     <img class="avatar" src="assets/images/avatar-shira-psd.png" alt="שירה"
@@ -217,7 +217,7 @@
   </section>
 
   <!-- ===== SCREENS 15-16 — measurement montage video (Gal measures, porous basalt floats, Shira proposes weight method) ===== -->
-  <section class="screen" data-screen="9" data-type="video" data-gate="video" aria-hidden="true">
+  <section class="screen" data-screen="8" data-type="video" data-gate="video" aria-hidden="true">
     <div class="videoscreen">
       <video class="video-el" src="assets/video/Chem1_Video4.mp4?v=2" playsinline preload="auto"></video>
       <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
@@ -247,7 +247,7 @@
   </section>
 
   <!-- ===== SCREEN 17 — question Q2א (drag to order measurement steps) ===== -->
-  <section class="screen" data-screen="10" data-type="question" data-qid="q2a" data-points="6.25"
+  <section class="screen" data-screen="9" data-type="question" data-qid="q2a" data-points="6.25"
            data-fb-correct="סידרתם את שלבי תהליך המדידה וראיתם כיצד ניתן למדוד נפח של דגימה נקבובית שצפה על פני המים."
            data-fb-incorrect="לא מדויק. הנה הסדר הנכון: תחילה מודדים את נפח המשקולת לבדה, אחר כך מצמידים אליה את הדגימה ומודדים את הנפח המשותף, ולבסוף מחסרים את נפח המשקולת כדי לקבל את נפח הדגימה."
            aria-hidden="true">
@@ -286,7 +286,7 @@
   </section>
 
   <!-- ===== SCREEN 19 — question Q2ב (drag reason to each step) + method popup ===== -->
-  <section class="screen" data-screen="11" data-type="question" data-qid="q2b" data-points="6.25"
+  <section class="screen" data-screen="10" data-type="question" data-qid="q2b" data-points="6.25"
            data-fb-correct="הצלחתם להבין לא רק את סדר הפעולות במדידת הנפח, אלא גם את חשיבותן להבטחת הדיוק במדידה. במדע חשוב ה־&quot;למה&quot; (הנימוק לפעולה) לא פחות מה־&quot;איך&quot; (הפעולה עצמה)."
            data-fb-incorrect="לא מדויק. מודדים את המשקולת לבדה כדי שנוכל לחסר אותה בהמשך. מצמידים את המשקולת לדגימה כדי שהדגימה תשקע ותדחק מים. מחסרים את נפח המשקולת כדי לקבל את נפח הדגימה בלבד."
            aria-hidden="true">
@@ -345,7 +345,7 @@
   </section>
 
   <!-- ===== SCREEN 22 — content ===== -->
-  <section class="screen" data-screen="12" data-type="content" aria-hidden="true">
+  <section class="screen" data-screen="11" data-type="content" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-22.png?v=2"
          alt="שירה מצביעה על המשורה שבה משקולת ודגימת סלע שקועות במים">
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
@@ -357,7 +357,7 @@
   </section>
 
   <!-- ===== SCREEN 23 — question Q3 (GOLD question pattern) ===== -->
-  <section class="screen" data-screen="13" data-type="question" data-qid="q3" data-answer="3" data-points="12.5"
+  <section class="screen" data-screen="12" data-type="question" data-qid="q3" data-answer="3" data-points="12.5"
            data-fb-correct="כדי למצוא את נפח הדגימה בלבד, היינו צריכים להחסיר את נפח המשקולת מתוך הנפח המשותף."
            data-fb-incorrect="כדי למצוא את נפח הדגימה בלבד, היינו צריכים להחסיר את נפח המשקולת מתוך הנפח המשותף."
            aria-hidden="true">
@@ -395,7 +395,7 @@
   </section>
 
   <!-- ===== SCREEN 25 — concept diagram (body volume = material + voids) ===== -->
-  <section class="screen" data-screen="14" data-type="content" aria-hidden="true">
+  <section class="screen" data-screen="13" data-type="content" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-25.png?v=4"
          alt="מעבדת ירח, בועית של שירה ולוח ריק לתרשים המושגים">
     <img class="avatar" src="assets/images/shira-avatar.png" alt="שירה" style="left:1637px; top:52px; width:190px; height:189px;">
@@ -415,7 +415,7 @@
   </section>
 
   <!-- ===== SCREEN 26 — question Q4 ===== -->
-  <section class="screen" data-screen="15" data-type="question" data-qid="q4" data-answer="1" data-points="12.5"
+  <section class="screen" data-screen="14" data-type="question" data-qid="q4" data-answer="1" data-points="12.5"
            data-fb-correct="באחסון ואריזה, הנתון הקובע הוא המקום הכולל שהגוף תופס, כולל החללים שבתוכו."
            data-fb-incorrect="באחסון ואריזה, הנתון הקובע הוא המקום הכולל שהגוף תופס, כולל החללים שבתוכו."
            aria-hidden="true">
@@ -440,7 +440,7 @@
   </section>
 
   <!-- ===== SCREEN 28 — dialogue (Gal left, Shira right) ===== -->
-  <section class="screen" data-screen="16" data-type="content" aria-hidden="true">
+  <section class="screen" data-screen="15" data-type="content" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-28.png?v=2"
          alt="גל ושירה משוחחים על נתון נפח החללים בסלע">
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
@@ -454,7 +454,7 @@
   </section>
 
   <!-- ===== SCREEN 29 — question Q5 ===== -->
-  <section class="screen" data-screen="17" data-type="question" data-qid="q5" data-answer="2" data-points="12.5"
+  <section class="screen" data-screen="16" data-type="question" data-qid="q5" data-answer="2" data-points="12.5"
            data-fb-correct="חשוב להבין את ההבדל בין המדידה לבין הפרשנות שלה. הנתון של 7 מ&quot;ל הוא ראיה מדעית לקיומם של חללים בסלע, אך הוא אינו מאפשר לנו להסיק מה נמצא בתוכם."
            data-fb-incorrect="חשוב להבין את ההבדל בין המדידה לבין הפרשנות שלה. הנתון של 7 מ&quot;ל הוא ראיה מדעית לקיומם של חללים בסלע, אך הוא אינו מאפשר לנו להסיק מה נמצא בתוכם."
            aria-hidden="true">
@@ -478,7 +478,7 @@
   </section>
 
   <!-- ===== SCREEN 31 — dialogue (regolith) + microscope view ===== -->
-  <section class="screen" data-screen="18" data-type="content" aria-hidden="true">
+  <section class="screen" data-screen="17" data-type="content" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-31.png?v=6"
          alt="גל ושירה דנים ברגולית (אבק הירח) הנשפך לכוס; תמונת מיקרוסקופ של גרגרי הסלע">
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
@@ -499,7 +499,7 @@
   </section>
 
   <!-- ===== SCREEN 32 — question Q6 (multi-select: regolith state of matter) ===== -->
-  <section class="screen" data-screen="19" data-type="question" data-qid="q6" data-answer="2,3,5" data-points="12.5" data-multi="true"
+  <section class="screen" data-screen="18" data-type="question" data-qid="q6" data-answer="2,3,5" data-points="12.5" data-multi="true"
            data-fb-correct="אבקה היא מוצק גרגירי. היא נשפכת ומקבלת את צורת הכלי, אבל כל גרגר בה הוא מוצק שצורתו אינה משתנה לצורת הכלי (ולכן ניתן לדחוס את האבקה עד לגבול מסוים). נפח של אבקה ניתן למדוד במשורה – הנפח הנמדד כולל את גרגרי האבקה ואת הרווחים שביניהם."
            data-fb-incorrect="אבקה היא מוצק גרגירי. היא נשפכת ומקבלת את צורת הכלי, אבל כל גרגר בה הוא מוצק שצורתו אינה משתנה לצורת הכלי (ולכן ניתן לדחוס את האבקה עד לגבול מסוים). נפח של אבקה ניתן למדוד במשורה – הנפח הנמדד כולל את גרגרי האבקה ואת הרווחים שביניהם."
            aria-hidden="true">
@@ -537,7 +537,7 @@
   </section>
 
   <!-- ===== SCREEN 34 — dialogue (Gal finds the flask; Shira: need to calibrate) ===== -->
-  <section class="screen" data-screen="20" data-type="content" aria-hidden="true">
+  <section class="screen" data-screen="19" data-type="content" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-34-newer.png"
          alt="גל מציג בקבוק ארלנמאייר לשירה שאוחזת במשורה; שיחה על כיול">
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
@@ -555,7 +555,7 @@
   </section>
 
   <!-- ===== SCREEN 35 — calibration explanation (Shira) ===== -->
-  <section class="screen" data-screen="21" data-type="content" aria-hidden="true">
+  <section class="screen" data-screen="20" data-type="content" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-35.png?v=3"
          alt="שירה מסבירה מהו כיול, לצד בקבוק ארלנמאייר וכיתוב הסבר">
     <img class="avatar" src="assets/images/shira-avatar.png" alt="שירה" style="left:1637px; top:52px; width:190px; height:189px;">
@@ -574,7 +574,7 @@
   </section>
 
   <!-- ===== SCREEN 36 — calibration applet ===== -->
-  <section class="screen" data-screen="22" data-type="applet" aria-hidden="true">
+  <section class="screen" data-screen="21" data-type="applet" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-36.png?v=2"
          alt="מעבדת ירח מוחשכת, בועית הנחיה של שירה ולוח היישומון לכיול הארלנמאייר">
     <img class="avatar" src="assets/images/shira-avatar.png" alt="שירה" style="left:1637px; top:52px; width:190px; height:189px;">
@@ -590,7 +590,7 @@
   </section>
 
   <!-- ===== SCREEN 37 — question Q7א (drag to order the calibration steps) ===== -->
-  <section class="screen" data-screen="23" data-type="question" data-qid="q7a" data-points="6.25"
+  <section class="screen" data-screen="22" data-type="question" data-qid="q7a" data-points="6.25"
            data-fb-correct="אלו שלבי תהליך הכיול של הבקבוק: מודדים נפח ידוע במשורה, מעבירים אותו לבקבוק, מסמנים שְׁנָת בגובה המים, וממשיכים כך הלאה."
            data-fb-incorrect="אלו שלבי תהליך הכיול של הבקבוק: מודדים נפח ידוע במשורה, מעבירים אותו לבקבוק, מסמנים שְׁנָת בגובה המים, וממשיכים כך הלאה."
            aria-hidden="true">
@@ -637,7 +637,7 @@
   </section>
 
   <!-- ===== SCREEN 39 — question Q7ב (fill-in dropdowns) ===== -->
-  <section class="screen" data-screen="24" data-type="question" data-qid="q7b" data-points="6.25"
+  <section class="screen" data-screen="23" data-type="question" data-qid="q7b" data-points="6.25"
            data-fb-correct="זהו עקרון הכיול. צורת הכלי משפיעה על מיקום השְׁנָתוֹת בכלי והמרחקים ביניהן."
            data-fb-incorrect="זהו עקרון הכיול. צורת הכלי משפיעה על מיקום השְׁנָתוֹת בכלי והמרחקים ביניהן."
            aria-hidden="true">
@@ -685,7 +685,7 @@
   </section>
 
   <!-- ===== SCREEN 41 — data-report table + Gal bubble ===== -->
-  <section class="screen" data-screen="25" data-type="content" aria-hidden="true">
+  <section class="screen" data-screen="24" data-type="content" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-41.png?v=3"
          alt="דוח נתונים: טבלת נפחי דגימות הסלע, וגל ליד מבחנה עם רגולית">
     <img class="avatar" src="assets/images/gal-avatar.png?v=3" alt="גל" style="left:1637px; top:52px; width:189px; height:189px;">
@@ -707,7 +707,7 @@
   </section>
 
   <!-- ===== SCREEN 42 — dialogue (Shira left, Gal right) ===== -->
-  <section class="screen" data-screen="26" data-type="content" aria-hidden="true">
+  <section class="screen" data-screen="25" data-type="content" aria-hidden="true">
     <img class="screen-bg" src="assets/images/bg-42.png?v=4"
          alt="גל ושירה ליד ארבע דגימות הסלע — שיחה על נפח ומסה">
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
@@ -721,7 +721,7 @@
   </section>
 
   <!-- ===== SCREEN 43 — question Q8 ===== -->
-  <section class="screen" data-screen="27" data-type="question" data-qid="q8" data-answer="2" data-points="12.5"
+  <section class="screen" data-screen="26" data-type="question" data-qid="q8" data-answer="2" data-points="12.5"
            data-fb-correct="שתי דגימות יכולות לתפוס אותו מקום (נפח זהה) אך להכיל כמות חומר שונה (מסה שונה)."
            data-fb-incorrect="שתי דגימות יכולות לתפוס אותו מקום (נפח זהה) אך להכיל כמות חומר שונה (מסה שונה)."
            aria-hidden="true">
@@ -745,7 +745,7 @@
   </section>
 
   <!-- ===== SCREEN 45 — closing video (Shira wrap-up + Gal + invitation), then סיום submits the score ===== -->
-  <section class="screen" data-screen="28" data-type="video" data-gate="video" data-final aria-hidden="true">
+  <section class="screen" data-screen="27" data-type="video" data-gate="video" data-final aria-hidden="true">
     <div class="videoscreen">
       <video class="video-el" src="assets/video/Chem1_Video5.mp4?v=2" playsinline preload="auto"></video>
       <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
