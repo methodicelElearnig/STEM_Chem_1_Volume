@@ -18,7 +18,7 @@
     <b>בדיקת גשר QA:</b>
     <span>מסכים שהתגלו:</span> <span id="total">— (ממתין ל-DEV_READY…)</span>
     <button id="prev">◀ הקודם</button>
-    <input id="scr" type="number" min="0" value="0">
+    <input id="scr" type="number" min="1" value="1">
     <button id="next">הבא ▶</button>
     <span id="note"></span>
   </div>
@@ -29,20 +29,20 @@
   var totalEl = document.getElementById('total');
   var scr = document.getElementById('scr');
   var note = document.getElementById('note');
-  var TOTAL = 0, cur = 0;
+  var TOTAL = 0, cur = 1;
 
   // receive the screen count from the lomda's main.js (DEV_READY handshake)
   window.addEventListener('message', function (e) {
     var d = e && e.data || {};
     if (d.type === 'DEV_READY') {
       TOTAL = d.total || 0;
-      totalEl.textContent = TOTAL + '  (0…' + (TOTAL - 1) + ')';
-      scr.max = TOTAL - 1;
+      totalEl.textContent = TOTAL + '  (1…' + TOTAL + ')';
+      scr.max = TOTAL;
       note.textContent = TOTAL ? '✔ הגשר עובד' : '';
     }
   });
   function go(n){
-    if (TOTAL) n = Math.max(0, Math.min(TOTAL - 1, n));
+    if (TOTAL) n = Math.max(1, Math.min(TOTAL, n));
     cur = n; scr.value = n;
     frame.contentWindow.postMessage({ type: 'DEV_GOTO', screen: n }, '*');
   }

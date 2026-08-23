@@ -20,13 +20,17 @@
       if (a.name.indexOf('data-') === 0 || a.name.indexOf('aria-') === 0) s.setAttribute(a.name, a.value);
     });
   });
-  /* ---------- DEV/QA postMessage bridge (figma-lomda-builder convention) ----------
-     The QA/preview host embeds this lomda in an iframe and learns the page count via
-     a handshake: the lomda posts { type:'DEV_READY', total:N } and accepts
-     { type:'DEV_GOTO', screen:n } to navigate. Declared EARLY (before the heavier
-     init) and retried, so the count is announced even if a later step errors and to
-     beat any race with the host attaching its listener. */
-  (function devBridge() {
+  /* ---------- QA / harness integration (figma-lomda-builder convention) ----------
+     Matches the approved org lomdot (Flickering-Lights / WallPaint): expose top-level
+     globals the QA host can read/drive, keep a live window.lomdaState, and post
+     LOMDA_* messages. The public goTo/currentScreen are 1-based (data-screen 1..N);
+     internal navigation stays 0-based array index. Also keeps the older DEV_READY /
+     DEV_GOTO handshake for backward-compatible previewers. */
+  window.TOTAL_SCREENS = screens.length;
+  window.currentScreen = 1;
+  window.lomdaState = { score: 0, questionScores: {}, DONE: {} };
+  window.goTo = function (n) { goTo((parseInt(n, 10) || 1) - 1); };   // public API: 1-based
+  (function harness() {
     var acked = false;
     function announce() {
       try {
@@ -37,12 +41,12 @@
     }
     window.addEventListener('message', function (e) {
       var d = (e && e.data) || {};
-      if (d.type === 'DEV_GOTO' && typeof d.screen === 'number') { acked = true; goTo(d.screen); }
-      else { announce(); }        // any other ping → re-announce the screen count
+      if (d.type === 'DEV_GOTO' && typeof d.screen === 'number') { acked = true; window.goTo(d.screen); }
+      else { announce(); }
     });
     announce();
     window.addEventListener('load', announce);
-    var n = 0, iv = setInterval(function () { announce(); if (++n > 20 || acked) clearInterval(iv); }, 400);
+    var k = 0, iv = setInterval(function () { announce(); if (++k > 20 || acked) clearInterval(iv); }, 400);
   })();
 
   var btnFwd  = document.getElementById('nav-fwd');   // forward = next (bottom-left, RTL)
@@ -75,6 +79,8 @@
     if (screens[current].getAttribute('data-type') === 'end') showScore();
     revealScreen(screens[current]);
     if (screens[current]._onEnter) screens[current]._onEnter();
+    window.currentScreen = current + 1;   // 1-based, for the QA host
+    try { if (window.parent && window.parent !== window) window.parent.postMessage({ type: 'LOMDA_SCREEN_CHANGED', screen: current + 1 }, '*'); } catch (e) {}
   }
 
   /* ---------- FLOAT-IN REVEAL ---------- */
@@ -154,7 +160,7 @@
         if (add > 0) earned += add;                        // supports partial credit (multi-select)
         if (scored) score++;
         answered[qid] = true;
-        if (window.SCORM) window.SCORM.setScore(earned);   // report running score to the LMS
+        if (window.SCORM) window.SCORM.setScore(earned); if (window.lomdaState) window.lomdaState.score = earned;   // report running score to the LMS
       }
       options.forEach(function (o) { o.classList.add('is-locked'); });
       if (check) check.hidden = true;
@@ -353,7 +359,7 @@
     });
 
     function award(gain, scored) {
-      if (!answered[qid]) { if (gain > 0) earned += gain; if (scored) score++; answered[qid] = true; if (window.SCORM) window.SCORM.setScore(earned); }
+      if (!answered[qid]) { if (gain > 0) earned += gain; if (scored) score++; answered[qid] = true; if (window.SCORM) window.SCORM.setScore(earned); if (window.lomdaState) window.lomdaState.score = earned; }
       cards.forEach(function (c) { c.style.pointerEvents = 'none'; });
       if (check) check.hidden = true;
       updateChrome(); if (btnFwd) btnFwd.classList.add('nav-pulse');   // forward appears only now
@@ -623,7 +629,9 @@
   function showScore() {
     var el = document.getElementById('final-score');
     if (el) el.textContent = Math.round(earned);
-    if (window.SCORM) window.SCORM.complete(earned, MASTERY);   // final score + pass/fail
+    if (window.lomdaState) window.lomdaState.score = earned;
+    if (window.SCORM) window.SCORM.complete(earned, MASTERY);   // final score + pass/fail (no-op if no LMS)
+    try { if (window.parent && window.parent !== window) window.parent.postMessage({ type: 'LOMDA_COMPLETE', score: Math.round(earned) }, '*'); } catch (e) {}
   }
   var end = document.querySelector('.screen[data-type="end"]');
   if (end) {
