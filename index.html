@@ -9,7 +9,7 @@
 <body>
 
 <h1 class="sr-only">לומדת נפח — מדידת נפח בתחנת העגינה</h1>
-<div id="stage" class="stage" role="main" aria-label="לומדת נפח">
+<div id="app" class="stage" role="main" aria-label="לומדת נפח">
 
   <!-- ===== SCREEN 2 — opening video (play-button start, synced captions, forward gated until watched) ===== -->
   <section class="screen active" data-screen="0">
@@ -758,7 +758,7 @@
         <input class="vc-vol" type="range" min="0" max="100" value="100" step="1" data-vol aria-label="עוצמת שמע">
         <button class="vc-btn" type="button" data-full aria-label="מסך מלא">⛶</button>
       </div>
-      <button class="end-submit" type="button" data-submit hidden>סיום</button>
+      <button class="end-submit" type="button" data-submit hidden aria-label="סיימתי — שליחת הציון וסיום">סיימתי</button>
       <div class="endcard" data-endcard hidden role="dialog" aria-label="סיום הלומדה">
         <h2>כל הכבוד! סיימתם את הלומדה</h2>
         <p>הציון שלכם: <span id="final-score">0</span> מתוך 100</p>

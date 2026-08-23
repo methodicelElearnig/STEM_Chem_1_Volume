@@ -6,7 +6,7 @@
 (function () {
   'use strict';
 
-  var stage   = document.getElementById('stage');
+  var stage   = document.getElementById('app');
   var screens = Array.prototype.slice.call(document.querySelectorAll('.screen'));
 
   /* QA-compat: each <section> is kept clean (class + data-screen only) so the QA
