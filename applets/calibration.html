@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>כיול כלים: דיוק מדעי מושלם</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1D4ED8;
+    --primary-hover: #1E3A8A;
+    --bg-page: #0F172A; 
+    --card-bg: #FAF3E0; 
+    --text-main: #1E293B;
+    --text-muted: #475569;
+    --gold: #D97706;
+    --gold-d: #B45309;
+    --green-d: #15803D;
+    --done-bg: #E0E7FF;
+  }
+  
+  * { box-sizing: border-box; }
+  
+  html, body { background: transparent; }
+  body {
+    margin: 0;
+    font-family: 'Rubik', sans-serif;
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 6px;
+    min-height: auto;
+  }
+
+  .app {
+    max-width: 900px;
+    width: 100%;
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 26px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+    border: 1px solid #475569;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  
+  .header h2 { margin: 0; color: var(--primary); font-size: 28px; font-weight: 700; }
+
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .stage {
+    border-radius: 20px;
+    padding: 16px;
+    flex: 0 0 auto;
+    background: #FFFFFF;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border: 3px solid #E2E8F0;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .panel {
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #FFFFFF;
+    padding: 22px;
+    border-radius: 20px;
+    border: 2px solid #CBD5E1;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+  }
+  
+  .steps button {
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    padding: 16px;
+    width: 100%;
+    border: 2px solid var(--primary);
+    background: #FFFFFF;
+    color: var(--primary);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  }
+  
+  .steps button:hover:not(:disabled) {
+    background: #F1F5F9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(29, 78, 216, 0.15);
+  }
+
+  .steps button.mark-btn {
+    background: var(--gold);
+    color: white;
+    border-color: var(--gold-d);
+  }
+  
+  .steps button.mark-btn:hover {
+    background: var(--gold-d);
+  }
+  
+  .steps button.done {
+    background: var(--done-bg);
+    color: var(--primary-hover);
+    border-color: #93C5FD;
+    cursor: default;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .steps button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .result {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--green-d);
+    text-align: center;
+    padding: 16px;
+    background: #F0FDF4;
+    border-radius: 16px;
+    border: 2px solid #BBF7D0;
+  }
+  
+  .result small {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: #166534;
+    margin-top: 4px;
+  }
+  
+  .reset {
+    align-self: center;
+    font-family: inherit;
+    font-size: 15px;
+    padding: 12px 24px;
+    border: none;
+    background: var(--text-main);
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  
+  .reset:hover { 
+    background: #000000; 
+    transform: translateY(-2px);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h2>כיול כלים: משורה לעומת ארלנמאייר</h2>
+  </div>
+  <div class="wrap">
+    <div class="stage">
+      <svg id="svg" width="480" height="400" viewBox="0 44 480 400">
+        <defs>
+          <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+            <stop offset="15%" stop-color="#ffffff" stop-opacity="0.1"/>
+            <stop offset="85%" stop-color="#ffffff" stop-opacity="0.05"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0.6"/>
+          </linearGradient>
+          <linearGradient id="waterGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.75"/>
+            <stop offset="50%" stop-color="#3B82F6" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#1D4ED8" stop-opacity="0.9"/>
+          </linearGradient>
+          <linearGradient id="waterTopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#93C5FD" stop-opacity="0.95"/>
+            <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.95"/>
+          </linearGradient>
+          
+          <clipPath id="cylClip">
+            <path d="M 60,100 L 60,380 Q 100,395 140,380 L 140,100 Z"/>
+          </clipPath>
+          
+          <clipPath id="flaskClip">
+            <path d="M 298,120 L 298,210 L 255,380 Q 320,395 385,380 L 342,210 L 342,120 Z"/>
+          </clipPath>
+        </defs>
+      </svg>
+    </div>
+    
+    <div class="panel">
+      <div class="steps" id="steps"></div>
+      <div class="result" id="result"></div>
+      <button class="reset" id="reset">↺ רוקן כלים והתחל מחדש</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var SVG = 'http://www.w3.org/2000/svg';
+var svg = document.getElementById('svg'), 
+    stepsBox = document.getElementById('steps'), 
+    resEl = document.getElementById('result');
+
+var CAP = 60, INC = 10;
+var state = 'ready_fill'; 
+var curVol = 0;   
+var markedVol = 0; 
+
+function E(t, a, x){
+  var e = document.createElementNS(SVG, t);
+  for(var k in a) e.setAttribute(k, a[k]);
+  if(x != null) e.textContent = x;
+  return e;
+}
+
+function clearScene(){ 
+  var defs = svg.querySelector('defs');
+  svg.innerHTML = ''; 
+  if(defs) svg.appendChild(defs); 
+}
+
+// --- מתמטיקה מדויקת מבוססת שטח חתך פיזיקלי ---
+// 1. משורה: רדיוס קבוע של 40 פיקסלים
+var cyl_r = 40; 
+var H_PER_10ML = 40; // 40 פיקסלים גובה לכל 10 מ"ל 
+var VOL_10ML = (cyl_r * cyl_r) * H_PER_10ML; // 64,000 יחידות נפח מוחלטות ל-10 מ"ל
+
+function cylY(v) {
+  return 380 - (v / 10) * H_PER_10ML;
+}
+
+// 2. ארלנמאייר: רדיוס משתנה, מחשב נפח זהה לחלוטין באותן יחידות
+function getFlaskRadius(y) {
+    if (y <= 210) return 22; // צוואר צר מרדיוס המשורה
+    if (y <= 380) return 22 + 43 * ((y - 210) / 170); // חרוט מתרחב עד לרדיוס 65
+    return 65;
+}
+
+var cumVol = [];
+var totalV = 0;
+// אינטגרציה מלאה - חישוב הנפח בכל פיקסל לאורך גובה הכלי
+for(var y = 390; y >= 100; y--) { 
+    var r = getFlaskRadius(y);
+    totalV += (r * r); 
+    cumVol[y] = totalV;
+}
+
+function erlY(v) {
+    if (v === 0) return 390;
+    var targetV = (v / 10) * VOL_10ML; 
+    for(var y = 390; y >= 100; y--) {
+        if (cumVol[y] >= targetV) return y;
+    }
+    return 100;
+}
+
+function draw(){
+  clearScene();
+  
+  // ========================== ציור משורה ==========================
+  var cx = 100, cw = 80;
+  var cylPath = 'M 60,100 L 60,380 Q 100,395 140,380 L 140,100 Z';
+  
+  svg.appendChild(E('path', {d: cylPath, fill:'#F8FAFC', stroke:'#CBD5E1', 'stroke-width':2}));
+  svg.appendChild(E('ellipse', {cx:cx, cy:100, rx:cyl_r, ry:10, fill:'#F8FAFC', stroke:'#CBD5E1', 'stroke-width':2}));
+  
+  if(curVol > 0){
+    var cwy = cylY(curVol);
+    svg.appendChild(E('rect',{x: 60, y: cwy, width: cw, height: 400-cwy, fill:'url(#waterGrad)', 'clip-path':'url(#cylClip)'}));
+    svg.appendChild(E('ellipse',{cx:cx, cy:cwy, rx:cyl_r, ry:(cyl_r)*0.2, fill:'url(#waterTopGrad)'}));
+  }
+  
+  for(var k=1; k <= (markedVol/INC); k++){
+    var vLine = k * INC;
+    var cyLine = cylY(vLine);
+    svg.appendChild(E('line',{x1:60, y1:cyLine, x2:75, y2:cyLine, stroke:'var(--gold-d)', 'stroke-width':3}));
+    svg.appendChild(E('text',{x:55, y:cyLine+5, 'font-size':15, 'font-weight':700, fill:'var(--gold-d)', 'text-anchor':'end', 'style':'direction:ltr'}, vLine));
+  }
+  
+  svg.appendChild(E('path', {d: cylPath, fill:'url(#glassGrad)', 'pointer-events':'none'}));
+  svg.appendChild(E('text',{x:cx, y:425, 'font-size':16, 'font-weight':700, fill:'#1E293B', 'text-anchor':'middle'},'משורה'));
+
+  // ========================== ציור ארלנמאייר ==========================
+  var ex = 320; 
+  var flaskPath = 'M 298,120 L 298,210 L 255,380 Q 320,395 385,380 L 342,210 L 342,120 Z';
+  
+  svg.appendChild(E('path', {d: flaskPath, fill:'#F8FAFC', stroke:'#CBD5E1', 'stroke-width':2}));
+  svg.appendChild(E('ellipse', {cx:ex, cy:120, rx:22, ry:6, fill:'#F8FAFC', stroke:'#CBD5E1', 'stroke-width':2}));
+  
+  if(curVol > 0){
+    var ewy = erlY(curVol);
+    var ehw = getFlaskRadius(ewy); 
+    
+    svg.appendChild(E('rect',{x: ex-80, y: ewy, width: 160, height: 400-ewy, fill:'url(#waterGrad)', 'clip-path':'url(#flaskClip)'}));
+    svg.appendChild(E('ellipse',{cx:ex, cy:ewy, rx:ehw, ry:ehw*0.2, fill:'url(#waterTopGrad)'}));
+  }
+  
+  for(var k=1; k <= (markedVol/INC); k++){
+    var vLine = k * INC;
+    var eyLine = erlY(vLine);
+    var ehw = getFlaskRadius(eyLine);
+    
+    svg.appendChild(E('line',{x1: ex+ehw-5, y1: eyLine, x2: ex+ehw+15, y2: eyLine, stroke:'var(--gold-d)', 'stroke-width':3}));
+    svg.appendChild(E('text',{x: ex+ehw+22, y: eyLine+5, 'font-size':15, 'font-weight':700, fill:'var(--gold-d)', 'text-anchor':'start', 'style':'direction:ltr'}, vLine));
+  }
+
+  svg.appendChild(E('path', {d: flaskPath, fill:'url(#glassGrad)', 'pointer-events':'none'}));
+  svg.appendChild(E('text',{x:ex, y:425, 'font-size':16, 'font-weight':700, fill:'#1E293B', 'text-anchor':'middle'},'ארלנמאייר'));
+}
+
+function fillWater() {
+  if (state !== 'ready_fill') return;
+  state = 'animating';
+  renderUI();
+  
+  var targetVol = curVol + INC;
+  var startVol = curVol;
+  var startTime = null;
+  
+  function fr(ts) {
+    if(!startTime) startTime = ts;
+    var p = Math.min(1, (ts - startTime) / 800); 
+    
+    curVol = startVol + (INC * p);
+    draw();
+    
+    if (p < 1) {
+      requestAnimationFrame(fr);
+    } else {
+      curVol = targetVol;
+      state = 'ready_mark';
+      renderUI();
+    }
+  }
+  requestAnimationFrame(fr);
+}
+
+function markLines() {
+  if (state !== 'ready_mark') return;
+  markedVol += INC;
+  state = (markedVol >= CAP) ? 'done' : 'ready_fill';
+  renderUI();
+}
+
+function renderUI(){
+  draw();
+  stepsBox.innerHTML = '';
+  
+  var b = document.createElement('button');
+  
+  if (state === 'ready_fill') {
+    b.textContent = 'הוסף 10 מ"ל לשני הכלים';
+    b.onclick = fillWater;
+  } 
+  else if (state === 'animating') {
+    b.textContent = 'מוזג מים...';
+    b.disabled = true;
+  }
+  else if (state === 'ready_mark') {
+    b.textContent = 'סמן שנת בשני הכלים (' + curVol + ' מ"ל)';
+    b.className = 'mark-btn';
+    b.onclick = markLines;
+  }
+  else if (state === 'done') {
+    b.textContent = '✓ הכלים מכוילים במדויק';
+    b.className = 'done';
+  }
+  
+  stepsBox.appendChild(b);
+  resEl.innerHTML = markedVol + ' מ"ל<small>נפח שסומן עד כה</small>';
+}
+
+document.getElementById('reset').onclick = function(){ 
+  if (state === 'animating') return;
+  curVol = 0;
+  markedVol = 0;
+  state = 'ready_fill';
+  renderUI(); 
+};
+
+renderUI();
+</script>
+</body>
+</html>

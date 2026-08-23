@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מדידה עקיפה - סימולציית מעבדה (דגימת סלע)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1D4ED8;
+    --primary-hover: #1E3A8A;
+    --bg-page: #0F172A; 
+    --card-bg: #FAF3E0; 
+    --text-main: #1E293B;
+    --text-muted: #475569;
+    --done-bg: #E0E7FF;
+    --done-border: #93C5FD;
+    --done-text: #1E40AF;
+  }
+  
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    font-family: 'Rubik', sans-serif;
+    color: var(--text-main);
+    background: var(--bg-page);
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+    min-height: 100vh;
+  }
+  
+  .app {
+    max-width: 880px;
+    width: 100%;
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+    border: 1px solid #475569;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+  .header h2 { margin: 0; color: var(--primary); font-size: 28px; font-weight: 700; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+  .header p { margin: 10px 0 0 0; color: var(--text-muted); font-size: 16px; line-height: 1.5; }
+  
+  .wrap {
+    display: flex;
+    gap: 36px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  
+  .stage {
+    border-radius: 20px;
+    padding: 20px;
+    flex: 0 0 auto;
+    background: #FFFFFF;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border: 3px solid #E2E8F0;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .panel {
+    flex: 1;
+    min-width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  
+  .pick {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid #CBD5E1;
+    background: #FFFFFF;
+    border-radius: 16px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: right;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  }
+  
+  .pick:hover:not(:disabled) {
+    background: #F1F5F9;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(29, 78, 216, 0.15);
+  }
+  
+  .pick:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #E2E8F0;
+    border-color: #CBD5E1;
+  }
+  
+  .pick.done {
+    background: var(--done-bg);
+    border-color: var(--done-border);
+    cursor: default;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .pick .lbl {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  
+  .pick.done .lbl { color: var(--done-text); }
+  
+  .data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #FFFFFF;
+    border: 2px solid #CBD5E1;
+    border-radius: 16px;
+    overflow: hidden;
+    font-size: 15px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+  }
+  
+  .data-table th, .data-table td {
+    padding: 14px 16px;
+    text-align: right;
+    border-bottom: 1px solid #E2E8F0;
+  }
+  
+  .data-table th {
+    background: #F1F5F9;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .data-table tr:last-child td { border-bottom: none; }
+  
+  .data-table .final-row {
+    background: var(--done-bg);
+    font-weight: 700;
+    color: var(--done-text);
+    font-size: 16px;
+  }
+  
+  .empty-cell {
+    color: #94A3B8;
+    font-style: italic;
+    font-size: 13.5px;
+  }
+  
+  .ltr-math {
+    direction: ltr;
+    display: inline-block;
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: var(--primary);
+  }
+  
+  .reset {
+    align-self: flex-start;
+    font-family: inherit;
+    font-size: 15px;
+    padding: 14px 28px;
+    border: none;
+    background: var(--text-main);
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+  
+  .reset:hover { 
+    background: #000000; 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+  }
+  
+  text { font-family: 'Rubik', sans-serif; dominant-baseline: central; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h2>מדידת נפח דגימה באמצעות משקולת</h2>
+    <p>בצעו את השלבים, צפו במפלס המים ועקבו אחר טבלת הנתונים<br>(שימו לב: גודל המשקולת ודגימת הסלע משתנים בהתאם לנפח המוגרל)</p>
+  </div>
+  <div class="wrap">
+    <div class="stage">
+      <svg id="svg" width="300" height="430" viewBox="0 0 300 430">
+        <defs>
+          <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+            <stop offset="15%" stop-color="#ffffff" stop-opacity="0.2"/>
+            <stop offset="85%" stop-color="#ffffff" stop-opacity="0.1"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0.7"/>
+          </linearGradient>
+          <linearGradient id="waterGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.75"/>
+            <stop offset="50%" stop-color="#3B82F6" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#1D4ED8" stop-opacity="0.9"/>
+          </linearGradient>
+          <linearGradient id="waterTopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#93C5FD" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.9"/>
+          </linearGradient>
+          <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#CBD5E1"/>
+            <stop offset="20%" stop-color="#F8FAFC"/>
+            <stop offset="50%" stop-color="#94A3B8"/>
+            <stop offset="80%" stop-color="#475569"/>
+            <stop offset="100%" stop-color="#1E293B"/>
+          </linearGradient>
+          <radialGradient id="rockGrad" cx="40%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#D1D5DB"/>
+            <stop offset="50%" stop-color="#9CA3AF"/>
+            <stop offset="100%" stop-color="#4B5563"/>
+          </radialGradient>
+          <filter id="dropShadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="5" stdDeviation="4" flood-opacity="0.4"/>
+          </filter>
+        </defs>
+        <g id="scene"></g>
+      </svg>
+    </div>
+    
+    <div class="panel">
+      <div id="picks"></div>
+      <div id="table-container"></div>
+      <button class="reset" id="reset">↺ התחל ניסוי מחדש (הגרל דגימה חדשה)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var SVG='http://www.w3.org/2000/svg';
+var scene = document.getElementById('scene'), 
+    picksEl = document.getElementById('picks'),
+    tableContainer = document.getElementById('table-container');
+
+var BASE=60, CAP=140;
+var weightVol, rockVol;
+var step=0, cur=BASE, busy=false;
+var cx=150, w=75, topY=30, botY=400, h=botY-topY;
+
+// מיקומי אובייקטים קבועים בתוך המים
+var wy_obj = 310; 
+var ry_obj = 360; 
+
+function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function initExperiment() {
+  if(busy) return;
+  step = 0;
+  cur = BASE;
+  weightVol = getRandomInt(3, 5) * 5; // 15, 20 או 25
+  rockVol = getRandomInt(6, 9) * 5;   // 30, 35, 40 או 45
+  render();
+}
+
+function yFor(v){ return botY - (v/CAP)*h; }
+function E(t,a,x){ var e=document.createElementNS(SVG,t); for(var k in a) e.setAttribute(k,a[k]); if(x!=null) e.textContent=x; return e; }
+function clear(el){ while(el.firstChild) el.removeChild(el.firstChild); }
+
+function draw(overrideWater, overrideObjY, overrideRockY){
+  clear(scene);
+  
+  // זכוכית אחורית של המשורה
+  scene.appendChild(E('rect', {x:cx-w/2, y:topY, width:w, height:h, rx:12, fill:'#F8FAFC', stroke:'#CBD5E1', 'stroke-width':2}));
+  
+  // שנתות מדידה (מספור כל 20 מ"ל)
+  for(var v=0; v<=CAP; v+=10){
+    var y = yFor(v), maj = (v%20===0);
+    scene.appendChild(E('line', {x1:cx-w/2, y1:y, x2:cx-w/2+(maj?16:8), y2:y, stroke:maj?'#64748B':'#CBD5E1', 'stroke-width':maj?2:1}));
+    if(maj) scene.appendChild(E('text', {x:cx-w/2-8, y:y, 'font-size':13, 'font-weight':700, fill:'#475569', 'text-anchor':'end', 'style':'direction:ltr'}, v));
+  }
+  
+  // חישוב גובה המים הנוכחי
+  var activeCur = (overrideWater !== undefined) ? overrideWater : cur;
+  var wy = yFor(activeCur);
+  var ry = 7; 
+  var waterHeight = botY - wy;
+  
+  if(waterHeight > 0) {
+    scene.appendChild(E('rect', {x:cx-w/2+2, y:wy-ry, width:w-4, height:waterHeight+ry-2, fill:'url(#waterGrad)', rx:4}));
+    scene.appendChild(E('ellipse', {cx:cx, cy:wy-ry, rx:(w-4)/2, ry:ry, fill:'url(#waterTopGrad)', stroke:'#1E3A8A', 'stroke-width':1.5}));
+    
+    // קו מדידה דינמי
+    scene.appendChild(E('line', {x1:cx+w/2, y1:wy, x2:cx+w/2+16, y2:wy, stroke:'#1D4ED8', 'stroke-width':2, 'stroke-dasharray':'4,2'}));
+    scene.appendChild(E('text', {x:cx+w/2+22, y:wy, 'font-size':15, 'font-weight':800, fill:'#1D4ED8', 'text-anchor':'start', 'style':'direction:ltr'}, Math.round(activeCur)));
+  }
+  
+  // הגדלתי את המרווחים כדי ששינוי הגודל יהיה בולט יותר לעין
+  var wH = 12 + (weightVol / 25) * 20; 
+  var currentObjY = (overrideObjY !== undefined) ? overrideObjY : wy_obj;
+
+  // חוט ראשי למשקולת
+  if(step >= 1) {
+    scene.appendChild(E('line', {x1:cx, y1:topY-10, x2:cx, y2:currentObjY - wH/2 - 4, stroke:'#475569', 'stroke-width':2}));
+  }
+
+  // ציור משקולת
+  if(step >= 1){
+    var wg = E('g', { filter: 'url(#dropShadow)' });
+    wg.appendChild(E('circle', {cx:cx, cy:currentObjY - wH/2 - 4, r:4, fill:'none', stroke:'url(#metalGrad)', 'stroke-width':2.5}));
+    if(step >= 2) {
+      wg.appendChild(E('circle', {cx:cx, cy:currentObjY + wH/2 + 4, r:4, fill:'none', stroke:'url(#metalGrad)', 'stroke-width':2.5}));
+    }
+    wg.appendChild(E('rect', {x:cx-4, y:currentObjY - wH/2, width:8, height:4, fill:'url(#metalGrad)'}));
+    wg.appendChild(E('rect', {x:cx-12, y:currentObjY - wH/2 + 4, width:24, height:wH - 8, rx:4, fill:'url(#metalGrad)', stroke:'#334155', 'stroke-width':1.5}));
+    wg.appendChild(E('rect', {x:cx-8, y:currentObjY - wH/2 + 6, width:3, height:wH - 12, fill:'#FFFFFF', opacity:0.4, rx:1}));
+    scene.appendChild(wg);
+  }
+  
+  // ציור הדגימה (סלע)
+  if(step >= 2){
+    // הגדלתי משמעותית את מקדם השינוי כדי שהסלע ייראה שונה בכל הגרלה
+    var rS = 0.3 + (rockVol / 45) * 0.7; 
+    var currentRockY = (overrideRockY !== undefined) ? overrideRockY : ry_obj;
+    
+    scene.appendChild(E('line', {x1:cx, y1:currentObjY + wH/2 + 8, x2:cx, y2:currentRockY - 22*rS, stroke:'#475569', 'stroke-width':2}));
+    
+    var rg = E('g', { filter: 'url(#dropShadow)' });
+    var rockPts = [
+      [0, -26], [12, -22], [24, -8], [28, 8], [16, 26], [2, 28], [-16, 22], [-28, 6], [-22, -12]
+    ];
+    
+    for(var i=0; i<rockPts.length; i++) {
+       rockPts[i][0] = cx + rockPts[i][0] * rS;
+       rockPts[i][1] = currentRockY + rockPts[i][1] * rS;
+    }
+    
+    var polyStr = rockPts.map(function(p){return p.join(',');}).join(' ');
+    rg.appendChild(E('polygon', {points: polyStr, fill:'url(#rockGrad)', stroke:'#1F2937', 'stroke-width':1.5}));
+    
+    var speckles = [
+      {cx: -10, cy: -10, rx: 4, ry: 3, rot: 15},
+      {cx: 12, cy: -12, rx: 3, ry: 4, rot: -20},
+      {cx: 15, cy: 10, rx: 5, ry: 3, rot: 45},
+      {cx: -12, cy: 12, rx: 4, ry: 5, rot: -10},
+      {cx: 0, cy: 5, rx: 6, ry: 4, rot: 80}
+    ];
+    
+    speckles.forEach(function(sp) {
+      rg.appendChild(E('ellipse', {
+        cx: cx + sp.cx * rS, 
+        cy: currentRockY + sp.cy * rS, 
+        rx: sp.rx * rS, 
+        ry: sp.ry * rS, 
+        fill: '#1F2937', 
+        opacity: 0.65,
+        transform: 'rotate(' + sp.rot + ' ' + (cx + sp.cx * rS) + ' ' + (currentRockY + sp.cy * rS) + ')'
+      }));
+    });
+    
+    scene.appendChild(rg);
+  }
+  
+  // השתקפות זכוכית קדמית
+  scene.appendChild(E('rect', {x:cx-w/2, y:topY, width:w, height:h, rx:12, fill:'url(#glassGrad)', 'pointer-events':'none'}));
+}
+
+function animStep1(cb){
+  busy = true;
+  var startY = topY - 20;
+  var waterSurfaceY = yFor(BASE);
+  // שלב באוויר די מהיר (800ms), שלב במים איטי בהרבה (2500ms)
+  var durAir = 800; 
+  var durWater = 2500; 
+  var t0 = null;
+
+  function fr(ts){
+    if(!t0) t0 = ts;
+    var elapsed = ts - t0;
+    
+    if(elapsed < durAir) {
+      // המשקולת נופלת באוויר עד למים. מפלס המים נשאר במקום.
+      var p = elapsed / durAir;
+      var currentY = startY + (waterSurfaceY - startY) * p;
+      draw(BASE, currentY); 
+      requestAnimationFrame(fr);
+    } else if(elapsed < durAir + durWater) {
+      // המשקולת שוקעת במים. המפלס עולה במקביל.
+      var p = (elapsed - durAir) / durWater;
+      var easeOut = 1 - Math.pow(1 - p, 3);
+      var currentY = waterSurfaceY + (wy_obj - waterSurfaceY) * easeOut;
+      var currentWater = BASE + weightVol * easeOut;
+      cur = currentWater;
+      draw(currentWater, currentY); 
+      requestAnimationFrame(fr);
+    } else {
+      cur = BASE + weightVol;
+      busy = false;
+      if(cb) cb();
+    }
+  }
+  requestAnimationFrame(fr);
+}
+
+function animStep2(cb){
+  busy = true;
+  var waterWithW = BASE + weightVol;
+  var waterSurfaceY = yFor(waterWithW);
+  var waterBaseY = yFor(BASE); // מפלס בלי כלום
+  
+  var phase1Dur = 800;  // משיכה באוויר בתוך המים
+  var phase2Dur = 1000; // יציאה מהמים (המפלס יורד)
+  var phase3Dur = 600;  // התרוממות באוויר
+  var phase4Dur = 1200; // נפילה מהירה באוויר עד שהסלע נוגע במים
+  var phase5Dur = 3000; // שקיעה איטית במים של שני האובייקטים (מפלס עולה)
+  
+  var t0 = null;
+
+  function fr(ts){
+    if(!t0) t0 = ts;
+    var elapsed = ts - t0;
+    
+    if(elapsed < phase1Dur) {
+      // משיכת המשקולת עד לפני המים
+      var p = elapsed / phase1Dur;
+      var currentY = wy_obj + (waterSurfaceY - wy_obj) * p;
+      draw(waterWithW, currentY);
+      requestAnimationFrame(fr);
+    } 
+    else if(elapsed < phase1Dur + phase2Dur) {
+      // יציאה מהמים
+      var p = (elapsed - phase1Dur) / phase2Dur;
+      var currentY = waterSurfaceY + ((topY - 10) - waterSurfaceY) * p;
+      var currentWater = waterWithW - weightVol * p;
+      cur = currentWater;
+      draw(currentWater, currentY);
+      requestAnimationFrame(fr);
+    } 
+    else if(elapsed < phase1Dur + phase2Dur + phase3Dur) {
+      // עוד קצת למעלה באוויר
+      var p = (elapsed - phase1Dur - phase2Dur) / phase3Dur;
+      var currentY = (topY - 10) + ((topY - 40) - (topY - 10)) * p;
+      draw(BASE, currentY);
+      requestAnimationFrame(fr);
+    } 
+    else if(elapsed < phase1Dur + phase2Dur + phase3Dur + phase4Dur) {
+      // נפילה באוויר של המשקולת + הסלע
+      step = 2; 
+      var p = (elapsed - phase1Dur - phase2Dur - phase3Dur) / phase4Dur;
+      
+      var diff = ry_obj - wy_obj; 
+      var startObjY = topY - 40;
+      var targetRockY = waterBaseY; // תחתית הסלע פוגעת במים (שבגובה BASE)
+      var targetObjY = targetRockY - diff;
+      
+      var currentObjY = startObjY + (targetObjY - startObjY) * p;
+      var currentRockY = (startObjY + diff) + (targetRockY - (startObjY + diff)) * p;
+      
+      // המים עדיין לא זזים!
+      draw(BASE, currentObjY, currentRockY); 
+      requestAnimationFrame(fr);
+    }
+    else if(elapsed < phase1Dur + phase2Dur + phase3Dur + phase4Dur + phase5Dur) {
+      // שקיעה איטית מאוד בתוך המים
+      var p = (elapsed - phase1Dur - phase2Dur - phase3Dur - phase4Dur) / phase5Dur;
+      var easeOut = 1 - Math.pow(1 - p, 3);
+      
+      var diff = ry_obj - wy_obj;
+      var startObjY = waterBaseY - diff;
+      var startRockY = waterBaseY;
+      
+      var currentObjY = startObjY + (wy_obj - startObjY) * easeOut;
+      var currentRockY = startRockY + (ry_obj - startRockY) * easeOut;
+      
+      var totalObjVol = weightVol + rockVol;
+      var currentWater = BASE + totalObjVol * easeOut;
+      cur = currentWater;
+      
+      // המים מתחילים לעלות לאט לאט
+      draw(currentWater, currentObjY, currentRockY); 
+      requestAnimationFrame(fr);
+    } 
+    else {
+      cur = BASE + weightVol + rockVol;
+      busy = false;
+      if(cb) cb();
+    }
+  }
+  requestAnimationFrame(fr);
+}
+
+var W_ICON = '<svg width="40" height="40" viewBox="0 0 44 44"><defs><linearGradient id="icMet" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#CBD5E1"/><stop offset="50%" stop-color="#94A3B8"/><stop offset="100%" stop-color="#475569"/></linearGradient></defs><circle cx="22" cy="8" r="5" fill="none" stroke="url(#icMet)" stroke-width="2.5"/><rect x="18" y="13" width="8" height="5" fill="url(#icMet)"/><rect x="8" y="18" width="28" height="22" rx="3" fill="url(#icMet)" stroke="#334155" stroke-width="1.5"/><rect x="13" y="19" width="4" height="20" fill="#FFF" opacity="0.4"/></svg>';
+var S_ICON = '<svg width="40" height="40" viewBox="0 0 44 44"><g transform="translate(22, 22) scale(0.65)"><polygon points="0,-26 12,-22 24,-8 28,8 16,26 2,28 -16,22 -28,6 -22,-12" fill="#9CA3AF" stroke="#1F2937" stroke-width="2"/><ellipse cx="-10" cy="-10" rx="4" ry="3" fill="#1F2937" opacity="0.7"/><ellipse cx="12" cy="-12" rx="3" ry="4" fill="#1F2937" opacity="0.7"/><ellipse cx="15" cy="10" rx="5" ry="3" fill="#1F2937" opacity="0.7"/><ellipse cx="-12" cy="12" rx="4" ry="5" fill="#1F2937" opacity="0.7"/><ellipse cx="0" cy="5" rx="6" ry="4" fill="#1F2937" opacity="0.7"/></g></svg>';
+
+function pick(icon,label,cls,en,fn){
+  var b = document.createElement('button'); 
+  b.className = 'pick' + (cls ? (' ' + cls) : '');
+  if(!en) b.disabled = true; 
+  b.innerHTML = icon + '<span class="lbl">' + label + '</span>';
+  if(en&&fn) b.onclick = fn; 
+  picksEl.appendChild(b);
+}
+
+function render(){
+  draw();
+  picksEl.innerHTML = '';
+  pick(W_ICON, step>=1 ? '1. המשקולת בפנים ✓' : '1. הכניסו את המשקולת בלבד', step>=1?'done':'', step===0, function(){if(busy)return; step=1; animStep1(render);});
+  pick(S_ICON, step>=2 ? '2. הדגימה צורפה ✓' : '2. חברו והשקיעו את הדגימה', step>=2?'done':'', step===1, function(){if(busy)return; animStep2(render);});
+  
+  var t = '<table class="data-table">';
+  t += '<thead><tr><th>שלב בניסוי</th><th>חישוב</th><th>נפח במ"ל</th></tr></thead><tbody>';
+  
+  t += '<tr><td>נפח מים התחלתי</td><td class="empty-cell">קריאה ישירה</td><td>' + BASE + '</td></tr>';
+  
+  if(step >= 1) {
+    var v1 = BASE + weightVol;
+    t += '<tr><td>מפלס מים + משקולת</td><td class="empty-cell">קריאה ישירה</td><td>' + v1 + '</td></tr>';
+    t += '<tr><td><strong>נפח המשקולת בלבד</strong></td><td><span class="ltr-math">' + v1 + ' - ' + BASE + '</span></td><td><strong>' + weightVol + '</strong></td></tr>';
+  }
+  
+  if(step >= 2) {
+    var v2 = BASE + weightVol + rockVol;
+    var totalObj = weightVol + rockVol; 
+    
+    t += '<tr><td>מפלס מים (עם דגימה)</td><td class="empty-cell">קריאה ישירה</td><td>' + v2 + '</td></tr>';
+    t += '<tr><td>נפח משקולת + דגימה</td><td><span class="ltr-math">' + v2 + ' - ' + BASE + '</span></td><td>' + totalObj + '</td></tr>';
+    
+    t += '<tr class="final-row"><td>נפח הדגימה</td><td><span class="ltr-math">' + totalObj + ' - ' + weightVol + '</span></td><td>' + rockVol + ' מ"ל</td></tr>';
+  }
+  
+  t += '</tbody></table>';
+  tableContainer.innerHTML = t;
+}
+
+document.getElementById('reset').onclick = initExperiment;
+initExperiment();
+</script>
+</body>
+</html>

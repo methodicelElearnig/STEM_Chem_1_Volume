@@ -1,0 +1,622 @@
+/* =====================================================================
+   STEM לומדה — reusable foundation engine
+   Stage scaling, screen navigation (design corner buttons + keyboard),
+   single-choice question flow, score, accessibility. Reused per unit.
+   ===================================================================== */
+(function () {
+  'use strict';
+
+  var stage   = document.getElementById('stage');
+  var screens = Array.prototype.slice.call(document.querySelectorAll('.screen'));
+  var btnFwd  = document.getElementById('nav-fwd');   // forward = next (bottom-left, RTL)
+  var btnBack = document.getElementById('nav-back');   // back = prev  (bottom-right)
+
+  var current = 0, score = 0, answered = {};
+  var earned = 0;              // points earned (SCORM 0–100)
+  var MASTERY = 80;           // matches the example package's mastery score
+
+  /* ---------- 1. STAGE SCALING (fit 1920×1080 to the viewport) ---------- */
+  function fit() {
+    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.setProperty('--scale', s);
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  /* ---------- 2. NAVIGATION ---------- */
+  function goTo(i) {
+    if (i < 0 || i >= screens.length) return;
+    Array.prototype.forEach.call(document.querySelectorAll('audio'), function (a) { try { a.pause(); } catch (e) {} });
+    if (screens[current]._onLeave) screens[current]._onLeave();
+    screens[current].classList.remove('is-active');
+    screens[current].setAttribute('aria-hidden', 'true');
+    current = i;
+    screens[current].classList.add('is-active');
+    screens[current].setAttribute('aria-hidden', 'false');
+    if (btnFwd) btnFwd.classList.remove('nav-pulse');
+    updateChrome();
+    if (screens[current].getAttribute('data-type') === 'end') showScore();
+    revealScreen(screens[current]);
+    if (screens[current]._onEnter) screens[current]._onEnter();
+  }
+
+  /* ---------- FLOAT-IN REVEAL ---------- */
+  var REVEAL_SEL = '.speech, .qstem, .options, .bubble, .applet-frame, [data-reveal]';
+  var revealGen = 0;
+  function revealScreen(s) {
+    revealGen++; var gen = revealGen;
+    var els = Array.prototype.slice.call(s.querySelectorAll(REVEAL_SEL));
+    els.sort(function (a, b) {
+      return (+a.getAttribute('data-reveal-order') || 0) - (+b.getAttribute('data-reveal-order') || 0);
+    });
+    els.forEach(function (el) { el.classList.add('float-in'); el.classList.remove('is-in'); });
+    els.forEach(function (el, i) {
+      setTimeout(function () { if (gen === revealGen) el.classList.add('is-in'); }, 150 + i * 550);
+    });
+  }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  if (btnFwd)  btnFwd.addEventListener('click', next);
+  if (btnBack) btnBack.addEventListener('click', prev);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft')  next();   // RTL: left = forward
+    if (e.key === 'ArrowRight') prev();
+  });
+
+  function updateChrome() {
+    if (btnBack) { btnBack.disabled = (current === 0); btnBack.style.visibility = (current === 0) ? 'hidden' : 'visible'; }
+    var sc = screens[current];
+    // on a question screen the forward arrow is hidden until it's answered correctly
+    var gated = (sc.getAttribute('data-type') === 'question' && !answered[sc.getAttribute('data-qid')]) ||
+                (sc.getAttribute('data-gate') === 'explore' && !sc._exploreDone) ||
+                (sc.getAttribute('data-gate') === 'video' && !sc._videoDone);
+    if (btnFwd) {
+      btnFwd.disabled = (current === screens.length - 1) || gated;
+      btnFwd.style.visibility = gated ? 'hidden' : 'visible';
+    }
+  }
+
+  /* ---------- 3. SINGLE-CHOICE QUESTION FLOW ----------
+     select an answer -> check button appears -> check -> feedback popup.
+     Right: dot shows ✓, options lock, forward arrow appears. Wrong: dot shows
+     ✕; picking another answer clears it and brings the check button back.   */
+  function initQuestion(screen) {
+    var qid     = screen.getAttribute('data-qid');
+    var correct = screen.getAttribute('data-answer');
+    var options = Array.prototype.slice.call(screen.querySelectorAll('.option'));
+    var check   = screen.querySelector('.btn--check');
+    var hintBtn = screen.querySelector('.btn--hint');
+    var hint    = screen.querySelector('.hint');
+    var fb      = screen.querySelector('.feedback');
+    var fbTitle = fb && fb.querySelector('.feedback__title');
+    var fbBody  = fb && fb.querySelector('.feedback__body');
+    var selected = null;
+    var attempts = 0;
+    var MAX_ATTEMPTS = 2;   // example rule: finish on a correct answer OR 2 attempts
+    var points = parseFloat(screen.getAttribute('data-points')) || 0;   // this Q/part's weight
+    var multi = screen.getAttribute('data-multi') === 'true';            // multi-select question
+    var correctSet = (correct || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+    function anySelected() { return options.some(function (o) { return o.getAttribute('aria-checked') === 'true'; }); }
+
+    function clearResult() {
+      options.forEach(function (o) { o.classList.remove('is-incorrect'); });
+      if (fb) { fb.hidden = true; fb.classList.remove('is-correct', 'is-incorrect'); }
+    }
+    function showFb(correctState, title, body) {
+      if (!fb) return;
+      fb.hidden = false;
+      fb.classList.toggle('is-correct', correctState);
+      fb.classList.toggle('is-incorrect', !correctState);
+      if (fbTitle) fbTitle.textContent = title;
+      if (fbBody)  fbBody.textContent = body;
+    }
+    function finishQuestion(scored, gained) {
+      if (!answered[qid]) {
+        var add = (typeof gained === 'number') ? gained : (scored ? points : 0);
+        if (add > 0) earned += add;                        // supports partial credit (multi-select)
+        if (scored) score++;
+        answered[qid] = true;
+        if (window.SCORM) window.SCORM.setScore(earned);   // report running score to the LMS
+      }
+      options.forEach(function (o) { o.classList.add('is-locked'); });
+      if (check) check.hidden = true;
+      updateChrome();                                  // reveal forward arrow
+      if (btnFwd) btnFwd.classList.add('nav-pulse');   // blink it
+    }
+
+    // ---- DROPDOWN (fill-in-the-blank) questions ----
+    var selects = Array.prototype.slice.call(screen.querySelectorAll('select.qselect'));
+    if (selects.length) {
+      var allChosen = function () { return selects.every(function (s) { return s.value !== ''; }); };
+      selects.forEach(function (s) {
+        s.addEventListener('change', function () {
+          if (fb) { fb.hidden = true; fb.classList.remove('is-correct', 'is-incorrect'); }
+          s.classList.remove('is-correct', 'is-incorrect');
+          if (check) check.hidden = !allChosen();
+        });
+      });
+      if (check) check.addEventListener('click', function () {
+        if (!allChosen()) return;
+        check.hidden = true;
+        var nCorrect = selects.filter(function (s) { return s.value === s.getAttribute('data-answer'); }).length;
+        selects.forEach(function (s) {
+          var ok = s.value === s.getAttribute('data-answer');
+          s.classList.toggle('is-correct', ok); s.classList.toggle('is-incorrect', !ok);
+        });
+        if (nCorrect === selects.length) {
+          selects.forEach(function (s) { s.disabled = true; });
+          showFb(true, 'צדקת!', screen.getAttribute('data-fb-correct') || '');
+          finishQuestion(true); return;
+        }
+        attempts++;
+        if (attempts >= MAX_ATTEMPTS) {
+          var partial = (nCorrect / selects.length) * points;   // partial credit per blank
+          selects.forEach(function (s) {
+            s.value = s.getAttribute('data-answer');
+            s.classList.add('is-correct'); s.classList.remove('is-incorrect'); s.disabled = true;
+          });
+          showFb(false, nCorrect > 0 ? 'כמעט!' : 'זו טעות', screen.getAttribute('data-fb-incorrect') || '');
+          finishQuestion(false, partial);
+        } else {
+          showFb(false, 'זו טעות', 'נסו שוב.');
+          check.hidden = false;
+        }
+      });
+      return;   // dropdown question fully handled
+    }
+
+    options.forEach(function (opt) {
+      function select() {
+        if (opt.classList.contains('is-locked')) return;
+        clearResult();                       // reset a previous wrong attempt
+        if (multi) {
+          opt.setAttribute('aria-checked', opt.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
+          if (check) check.hidden = !anySelected();
+        } else {
+          options.forEach(function (o) { o.setAttribute('aria-checked', 'false'); });
+          opt.setAttribute('aria-checked', 'true');
+          selected = opt;
+          if (check) check.hidden = false;   // reveal the check button once something is picked
+        }
+      }
+      opt.addEventListener('click', select);
+      opt.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); }
+      });
+    });
+
+    if (hintBtn && hint) hintBtn.addEventListener('click', function () {
+      var open = !hint.hidden;
+      hint.hidden = open;
+      hintBtn.setAttribute('aria-expanded', String(!open));
+    });
+
+    if (check) check.addEventListener('click', function () {
+      if (multi) {
+        if (!anySelected()) return;
+        check.hidden = true;
+        var sel = options.filter(function (o) { return o.getAttribute('aria-checked') === 'true'; })
+                         .map(function (o) { return o.getAttribute('data-value'); });
+        var ok = sel.length === correctSet.length && correctSet.every(function (v) { return sel.indexOf(v) >= 0; });
+        if (ok) {
+          options.forEach(function (o) { if (correctSet.indexOf(o.getAttribute('data-value')) >= 0) o.classList.add('is-correct'); });
+          showFb(true, 'צדקת!', screen.getAttribute('data-fb-correct') || '');
+          finishQuestion(true);
+          return;
+        }
+        attempts++;
+        options.forEach(function (o) {
+          if (o.getAttribute('aria-checked') === 'true' && correctSet.indexOf(o.getAttribute('data-value')) < 0)
+            o.classList.add('is-incorrect');
+        });
+        if (attempts >= MAX_ATTEMPTS) {
+          // partial credit: (correct picks − wrong picks) / total correct, floored at 0
+          var nCorrect = sel.filter(function (v) { return correctSet.indexOf(v) >= 0; }).length;
+          var nWrong = sel.length - nCorrect;
+          var frac = Math.max(0, (nCorrect - nWrong) / correctSet.length);
+          var partial = frac * points;
+          options.forEach(function (o) { if (correctSet.indexOf(o.getAttribute('data-value')) >= 0) o.classList.add('is-correct'); });
+          showFb(false, frac > 0 ? 'כמעט!' : 'זו טעות', screen.getAttribute('data-fb-incorrect') || '');
+          finishQuestion(false, partial);
+        } else {
+          showFb(false, 'זו טעות', 'נסו שוב.');
+          check.hidden = false;
+        }
+        return;
+      }
+      if (!selected) return;
+      var right = selected.getAttribute('data-value') === correct;
+      if (check) check.hidden = true;
+      if (right) {
+        selected.classList.add('is-correct');
+        showFb(true, 'צדקת!', screen.getAttribute('data-fb-correct') || '');
+        finishQuestion(true);
+        return;
+      }
+      // wrong answer
+      attempts++;
+      selected.classList.add('is-incorrect');
+      if (attempts >= MAX_ATTEMPTS) {
+        // second miss: reveal the correct answer and let the learner move on
+        options.forEach(function (o) {
+          if (o.getAttribute('data-value') === correct) o.classList.add('is-correct');
+        });
+        showFb(false, 'זו טעות', screen.getAttribute('data-fb-incorrect') || '');
+        finishQuestion(false);
+      } else {
+        // first miss: short "try again", keep options live (re-select clears + re-shows check)
+        showFb(false, 'זו טעות', 'נסו שוב.');
+      }
+    });
+  }
+  /* ---------- DRAG-TO-ORDER questions (cards → step slots) ---------- */
+  function initDragOrder(screen) {
+    var qid = screen.getAttribute('data-qid');
+    var points = parseFloat(screen.getAttribute('data-points')) || 0;
+    var cards = Array.prototype.slice.call(screen.querySelectorAll('.dcard'));
+    var slots = Array.prototype.slice.call(screen.querySelectorAll('.dslot'));
+    var check = screen.querySelector('.btn--check');
+    var fb = screen.querySelector('.feedback');
+    var fbT = fb && fb.querySelector('.feedback__title');
+    var fbB = fb && fb.querySelector('.feedback__body');
+    var attempts = 0, MAX = 2, done = false;
+    var px = function (el, p) { return parseFloat(el.style[p]) || 0; };
+    cards.forEach(function (c) { c._home = { l: px(c, 'left'), t: px(c, 'top') }; c._slot = null; });
+    slots.forEach(function (s) { s._card = null; });
+
+    function localXY(e) { var r = stage.getBoundingClientRect(); var sc = r.width / 1920; return { x: (e.clientX - r.left) / sc, y: (e.clientY - r.top) / sc }; }
+    function snap(card, slot) { card.style.left = px(slot, 'left') + 'px'; card.style.top = px(slot, 'top') + 'px'; }
+    function home(card) { card.style.left = card._home.l + 'px'; card.style.top = card._home.t + 'px'; }
+    function place(card, slot) {
+      if (card._slot) card._slot._card = null;
+      if (slot) {
+        if (slot._card && slot._card !== card) { var occ = slot._card; occ._slot = card._slot || null; if (occ._slot) { occ._slot._card = occ; snap(occ, occ._slot); } else home(occ); }
+        slot._card = card; card._slot = slot; snap(card, slot);
+      } else { card._slot = null; home(card); }
+    }
+    function allFilled() { return slots.every(function (s) { return s._card; }); }
+    function clearMarks() { cards.forEach(function (c) { c.classList.remove('is-correct', 'is-incorrect'); }); if (fb) fb.hidden = true; }
+
+    cards.forEach(function (card) {
+      card.addEventListener('pointerdown', function (e) {
+        if (done) return;
+        e.preventDefault(); clearMarks(); if (prompt) prompt.hidden = true;
+        var p = localXY(e), ox = p.x - px(card, 'left'), oy = p.y - px(card, 'top'), curSlot = null;
+        card.classList.add('dragging'); try { card.setPointerCapture(e.pointerId); } catch (x) {}
+        function move(ev) {
+          var q = localXY(ev); card.style.left = (q.x - ox) + 'px'; card.style.top = (q.y - oy) + 'px';
+          curSlot = null;
+          slots.forEach(function (s) {
+            var l = px(s, 'left'), t = px(s, 'top');
+            var hit = q.x >= l && q.x <= l + 586 && q.y >= t - 14 && q.y <= t + 112;
+            s.classList.toggle('over', hit); if (hit) curSlot = s;
+          });
+        }
+        function up() {
+          card.classList.remove('dragging'); slots.forEach(function (s) { s.classList.remove('over'); });
+          document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up);
+          place(card, curSlot); if (check) check.hidden = !allFilled();
+        }
+        document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
+      });
+    });
+
+    // small popup used for BOTH "try again" (1st miss) and the "→ כאן" reveal prompt (2nd miss)
+    var prompt = document.createElement('div');
+    prompt.className = 'dprompt'; prompt.hidden = true;
+    prompt.innerHTML = '<p class="dprompt__title"></p><p class="dprompt__body"></p>';
+    screen.appendChild(prompt);
+    var pTitle = prompt.querySelector('.dprompt__title');
+    var pBody = prompt.querySelector('.dprompt__body');
+    var pendingPartial = 0, pendingN = 0;
+    function showPrompt(title, bodyHTML) { pTitle.textContent = title; pBody.innerHTML = bodyHTML; prompt.hidden = false; }
+    prompt.addEventListener('click', function (e) {
+      if (e.target && e.target.classList.contains('dreveal')) { e.preventDefault(); reveal(); }
+    });
+
+    function award(gain, scored) {
+      if (!answered[qid]) { if (gain > 0) earned += gain; if (scored) score++; answered[qid] = true; if (window.SCORM) window.SCORM.setScore(earned); }
+      cards.forEach(function (c) { c.style.pointerEvents = 'none'; });
+      if (check) check.hidden = true;
+      updateChrome(); if (btnFwd) btnFwd.classList.add('nav-pulse');   // forward appears only now
+    }
+
+    function reveal() {   // stage 2: snap the correct answer + show the full explanation
+      prompt.hidden = true;
+      cards.forEach(function (c) { c._slot = null; }); slots.forEach(function (s) { s._card = null; });
+      slots.forEach(function (s) {
+        var cc = cards.filter(function (c) { return c.getAttribute('data-card') === s.getAttribute('data-slot'); })[0];
+        s._card = cc; cc._slot = s; snap(cc, s); cc.classList.remove('is-incorrect'); cc.classList.add('is-correct');
+      });
+      if (fb) { fb.hidden = false; fb.classList.add('is-incorrect'); fb.classList.remove('is-correct'); if (fbT) fbT.textContent = pendingN > 0 ? 'כמעט!' : 'זו טעות'; if (fbB) fbB.textContent = screen.getAttribute('data-fb-incorrect') || ''; }
+      done = true;
+      award(pendingPartial, false);
+    }
+
+    if (check) check.addEventListener('click', function () {
+      if (!allFilled() || done) return;
+      check.hidden = true;
+      if (fb) fb.hidden = true;
+      var nCorrect = 0;
+      slots.forEach(function (s) { if (s._card.getAttribute('data-card') === s.getAttribute('data-slot')) nCorrect++; });
+      if (nCorrect === slots.length) {
+        done = true;
+        slots.forEach(function (s) { s._card.classList.add('is-correct'); });
+        if (fb) { fb.hidden = false; fb.classList.add('is-correct'); fb.classList.remove('is-incorrect'); if (fbT) fbT.textContent = 'צדקת!'; if (fbB) fbB.textContent = screen.getAttribute('data-fb-correct') || ''; }
+        award(points, true); return;
+      }
+      attempts++;
+      if (attempts >= MAX) {
+        // stage 1: mark their own layout right/wrong, lock it, show the small "→ כאן" prompt
+        slots.forEach(function (s) { var ok = s._card.getAttribute('data-card') === s.getAttribute('data-slot'); s._card.classList.toggle('is-correct', ok); s._card.classList.toggle('is-incorrect', !ok); });
+        cards.forEach(function (c) { c.style.pointerEvents = 'none'; });
+        pendingN = nCorrect; pendingPartial = (nCorrect / slots.length) * points;
+        showPrompt(nCorrect > 0 ? 'כמעט!' : 'זו טעות', 'לחצו <a href="#" class="dreveal">כאן</a> לתשובה הנכונה');
+      } else {
+        // 1st miss: small "try again" (keeps their layout; they can re-check without moving)
+        showPrompt('זו טעות', 'נסו שוב.');
+        if (check) check.hidden = false;
+      }
+    });
+  }
+
+  /* ---------- SAMPLE EXPLORER (cards + captions driven by the narration timeline;
+     click opens info popup; forward gated until all four explored; a11y play/pause bar) ---------- */
+  function initExplore(screen) {
+    var cards  = Array.prototype.slice.call(screen.querySelectorAll('.card'));
+    var audio  = screen.querySelector('audio');
+    var capEl  = screen.querySelector('[data-cap]');
+    var ppBtn  = screen.querySelector('[data-pp]');
+    var rpBtn  = screen.querySelector('[data-replay]');
+
+    // narration timeline (seconds) — derived from the audio's phrase pauses; tweak here if needed
+    var REVEAL = { mare: 0.6, vesic: 5.2, anor: 9.7, regolith: 12.75 };   // when each card appears
+    var CAPS = [   // caption swaps at each phrase onset
+      { t: 0.0,   text: 'הבאנו בָּזֶלֶת מָארֶה - לבה שהתמצקה באזורים הכהים של הירח.' },
+      { t: 5.16,  text: 'בָּזֶלֶת נַקְבּוּבִית - שנוצרה כתוצאה מגזים שנלכדו בסלע.' },
+      { t: 9.66,  text: 'אָנוֹרְתוֹזִיט בהיר מהרי הירח העתיקים.' },
+      { t: 12.69, text: 'וגם רֶגוֹלִית - אָבָק יְרֵחִי.' }
+    ];
+    var PP_PLAY = '▶', PP_PAUSE = '❚❚';
+    var explored = {}, raf = null;
+
+    function checkGate() {
+      if (cards.every(function (c) { return explored[c.getAttribute('data-key')]; })) { screen._exploreDone = true; updateChrome(); }
+    }
+    function revealAll() { cards.forEach(function (c) { c.classList.add('in'); }); }
+    function setCap(t) {
+      var seg = CAPS[0];
+      for (var i = 0; i < CAPS.length; i++) { if (t >= CAPS[i].t) seg = CAPS[i]; }
+      if (capEl && capEl.textContent !== seg.text) capEl.textContent = seg.text;
+    }
+    function tick() {
+      var t = audio ? audio.currentTime : 0;
+      cards.forEach(function (c) { if (t >= (REVEAL[c.getAttribute('data-key')] || 0)) c.classList.add('in'); });
+      setCap(t);
+      if (audio && !audio.paused && !audio.ended && screen.classList.contains('is-active')) raf = requestAnimationFrame(tick);
+    }
+    function startLoop() { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); }
+
+    cards.forEach(function (card) {
+      function flip() {
+        card.classList.toggle('is-flipped');
+        card.setAttribute('aria-pressed', card.classList.contains('is-flipped') ? 'true' : 'false');
+        explored[card.getAttribute('data-key')] = true;   // flipped at least once
+        checkGate();
+      }
+      card.addEventListener('click', flip);
+      card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
+    });
+
+    if (audio) {
+      audio.addEventListener('play',  function () { if (ppBtn) ppBtn.textContent = PP_PAUSE; startLoop(); });
+      audio.addEventListener('pause', function () { if (ppBtn) ppBtn.textContent = PP_PLAY; });
+      audio.addEventListener('ended', function () { if (ppBtn) ppBtn.textContent = PP_PLAY; revealAll(); setCap(999); });
+      audio.addEventListener('seeked', function () { tick(); });
+    }
+    if (ppBtn) ppBtn.addEventListener('click', function () {
+      if (!audio) return;
+      if (audio.paused) { var p = audio.play(); if (p && p.catch) p.catch(function () {}); }
+      else audio.pause();
+    });
+    if (rpBtn) rpBtn.addEventListener('click', function () {
+      if (!audio) return;
+      cards.forEach(function (c) { c.classList.remove('in'); });
+      audio.currentTime = 0; var p = audio.play(); if (p && p.catch) p.catch(function () {});
+    });
+
+    screen._onEnter = function () {
+      cards.forEach(function (c) { c.classList.remove('in'); c.classList.remove('is-flipped'); c.setAttribute('aria-pressed', 'false'); });
+      setCap(0);
+      if (ppBtn) ppBtn.textContent = PP_PLAY;
+      if (audio) {
+        try {
+          audio.currentTime = 0;
+          var p = audio.play();
+          if (p && p.catch) p.catch(function () { /* autoplay blocked — user presses play */ });
+        } catch (e) {}
+      }
+      // backstop: if the audio never runs (blocked), reveal cards after the clip length so the learner can still explore
+      setTimeout(function () { if (screen.classList.contains('is-active') && (!audio || audio.currentTime < 0.2)) revealAll(); }, 16500);
+    };
+    screen._onLeave = function () { if (raf) cancelAnimationFrame(raf); };
+  }
+
+  screens.forEach(function (s) {
+    if (s.querySelector('.card')) initExplore(s);
+    if (s.getAttribute('data-type') === 'video') initVideo(s);
+    if (s.getAttribute('data-type') === 'question' && s.querySelector('.dcard')) { initDragOrder(s); return; }
+    if (s.getAttribute('data-type') === 'question') initQuestion(s);
+  });
+
+  /* ---------- VIDEO screen (custom control bar, play-button start, synced captions, forward gated) ---------- */
+  function initVideo(screen) {
+    var v = screen.querySelector('video');
+    var playBtn = screen.querySelector('.video-play');   // big center poster button
+    var cap = screen.querySelector('[data-vcap]');
+    if (!v) return;
+    // caption segments live as hidden HTML (translation-safe): .vcap-src > [data-t] spans
+    var src = screen.querySelector('.vcap-src');
+    var CAPS = src ? Array.prototype.map.call(src.querySelectorAll('[data-t]'), function (n) {
+      return { t: parseFloat(n.getAttribute('data-t')), text: n.textContent };
+    }) : [];
+    var CLEAR_AFTER = (src && src.getAttribute('data-end')) ? parseFloat(src.getAttribute('data-end')) : 1e9;
+    // custom control-bar elements
+    var ccBtn = screen.querySelector('[data-cc]'), ppBtn = screen.querySelector('[data-play]');
+    var seek = screen.querySelector('[data-seek]'), curEl = screen.querySelector('[data-cur]'), durEl = screen.querySelector('[data-dur]');
+    var muteBtn = screen.querySelector('[data-mute]'), volEl = screen.querySelector('[data-vol]'), fullBtn = screen.querySelector('[data-full]');
+    var submitBtn = screen.querySelector('[data-submit]'), endcard = screen.querySelector('[data-endcard]');
+    var raf = null, seeking = false, PLAY = '▶', PAUSE = '❚❚';
+
+    if (submitBtn) submitBtn.addEventListener('click', function () {
+      showScore();                       // reports cmi.core.score.raw + pass/fail + LMSFinish
+      if (endcard) endcard.hidden = false;
+      submitBtn.hidden = true;
+    });
+
+    function fmt(s) { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+    function setCap(t) {
+      var s = '';
+      for (var i = 0; i < CAPS.length; i++) { if (t >= CAPS[i].t) s = CAPS[i].text; }
+      if (t >= CLEAR_AFTER) s = '';
+      if (cap && cap.textContent !== s) cap.textContent = s;
+    }
+    function syncBar() {
+      if (curEl) curEl.textContent = fmt(v.currentTime);
+      if (!seeking && seek && v.duration) seek.value = String(Math.round(v.currentTime / v.duration * 1000));
+    }
+    function tick() {
+      setCap(v.currentTime); syncBar();
+      if (!v.paused && !v.ended && screen.classList.contains('is-active')) raf = requestAnimationFrame(tick);
+    }
+    function play() { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+
+    if (ccBtn) ccBtn.addEventListener('click', function () {
+      var on = ccBtn.getAttribute('aria-pressed') !== 'true';
+      ccBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      ccBtn.classList.toggle('is-off', !on);
+      if (cap) cap.classList.toggle('cc-hidden', !on);
+    });
+    if (playBtn) playBtn.addEventListener('click', play);
+    if (ppBtn) ppBtn.addEventListener('click', function () { if (v.paused) play(); else v.pause(); });
+    if (seek) {
+      seek.addEventListener('input', function () { seeking = true; if (v.duration) { v.currentTime = seek.value / 1000 * v.duration; setCap(v.currentTime); if (curEl) curEl.textContent = fmt(v.currentTime); } });
+      seek.addEventListener('change', function () { seeking = false; });
+    }
+    if (volEl) volEl.addEventListener('input', function () { v.volume = volEl.value / 100; v.muted = (v.volume === 0); if (muteBtn) muteBtn.textContent = v.muted ? '🔇' : '🔊'; });
+    if (muteBtn) muteBtn.addEventListener('click', function () { v.muted = !v.muted; muteBtn.textContent = v.muted ? '🔇' : '🔊'; if (volEl) volEl.value = v.muted ? 0 : Math.round(v.volume * 100); });
+    if (fullBtn) fullBtn.addEventListener('click', function () {
+      var el = screen.querySelector('.videoscreen') || v;
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      else if (el.requestFullscreen) { el.requestFullscreen(); }
+      else if (v.webkitEnterFullscreen) { v.webkitEnterFullscreen(); }
+    });
+
+    v.addEventListener('loadedmetadata', function () { if (durEl) durEl.textContent = fmt(v.duration); });
+    v.addEventListener('play',  function () { if (playBtn) playBtn.classList.add('hidden'); if (ppBtn) ppBtn.textContent = PAUSE; if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); });
+    v.addEventListener('pause', function () { if (ppBtn) ppBtn.textContent = PLAY; });
+    v.addEventListener('ended', function () { if (playBtn) playBtn.classList.remove('hidden'); if (ppBtn) ppBtn.textContent = PLAY; setCap(1e9); screen._videoDone = true; updateChrome(); if (submitBtn) submitBtn.hidden = false; });
+    v.addEventListener('seeked', function () { setCap(v.currentTime); });
+    v.addEventListener('timeupdate', function () { if (v.paused) syncBar(); });
+
+    screen._onEnter = function () {
+      try { v.pause(); v.currentTime = 0; } catch (e) {}
+      if (playBtn) playBtn.classList.remove('hidden');
+      if (ppBtn) ppBtn.textContent = PLAY;
+      if (seek) seek.value = 0;
+      if (curEl) curEl.textContent = fmt(0);
+      if (durEl && v.duration) durEl.textContent = fmt(v.duration);
+      if (submitBtn) submitBtn.hidden = true;
+      if (endcard) endcard.hidden = true;
+      setCap(0);
+    };
+    screen._onLeave = function () { if (raf) cancelAnimationFrame(raf); try { v.pause(); } catch (e) {} };
+  }
+
+  /* place each question's check button + feedback just below its options block
+     (handles short vs sentence-length answers without hard-coded coordinates) */
+  function layoutQuestions() {
+    screens.forEach(function (s) {
+      if (s.getAttribute('data-type') !== 'question') return;
+      var opts = s.querySelector('.options'); if (!opts) return;
+      var bottom = opts.offsetTop + opts.offsetHeight;
+      var chk = s.querySelector('.btn--check'); var f = s.querySelector('.feedback');
+      if (chk) chk.style.top = (bottom + 28) + 'px';
+      if (f)   f.style.top   = (bottom + 28) + 'px';
+    });
+  }
+  layoutQuestions();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutQuestions);
+
+  /* ---------- question progress bars: build the numbered circles ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll('.qprogress'), function (ol) {
+    var total = +ol.getAttribute('data-total') || 8;
+    var active = +ol.getAttribute('data-active');
+    for (var n = 1; n <= total; n++) {
+      var li = document.createElement('li');
+      li.textContent = n;
+      if (n === active) { li.className = 'is-active'; li.setAttribute('aria-current', 'step'); }
+      ol.appendChild(li);
+    }
+  });
+
+  /* ---------- applet iframes: auto-fit height to content (no scrollbar) ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll('iframe.applet-frame'), function (f) {
+    f.addEventListener('load', function () {
+      try {
+        var d = f.contentDocument || f.contentWindow.document;
+        var h = Math.max(d.body.scrollHeight, d.documentElement.scrollHeight);
+        if (h > 50) f.style.height = h + 'px';
+      } catch (e) { /* opaque origin (file://) — keep the fixed fallback height */ }
+    });
+  });
+
+  /* ---------- POPUP MODALS (e.g. Q2ב method applet) ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-modal]'), function (btn) {
+    var m = document.getElementById(btn.getAttribute('data-modal'));
+    if (!m) return;
+    btn.addEventListener('click', function () { m.hidden = false; });
+    m.addEventListener('click', function (e) { if (e.target === m) m.hidden = true; });
+    var x = m.querySelector('.modal__close');
+    if (x) x.addEventListener('click', function () { m.hidden = true; });
+  });
+
+  /* ---------- 4. END SCREEN ---------- */
+  function showScore() {
+    var el = document.getElementById('final-score');
+    if (el) el.textContent = Math.round(earned);
+    if (window.SCORM) window.SCORM.complete(earned, MASTERY);   // final score + pass/fail
+  }
+  var end = document.querySelector('.screen[data-type="end"]');
+  if (end) {
+    var restart = end.querySelector('.btn--restart');
+    if (restart) restart.addEventListener('click', function () { location.reload(); });
+  }
+
+  // hide all revealable elements up front, then float in the first screen's
+  screens.forEach(function (s) {
+    Array.prototype.forEach.call(s.querySelectorAll(REVEAL_SEL), function (el) {
+      el.classList.add('float-in');
+    });
+  });
+
+  // DEV: jump straight to a screen via #s=NN (used by dev_index.html previewer)
+  var hm = (location.hash || '').match(/s=([\w]+)/);
+  if (hm) {
+    for (var hi = 0; hi < screens.length; hi++) {
+      if (screens[hi].getAttribute('data-screen') === hm[1]) {
+        screens[current].classList.remove('is-active');
+        screens[current].setAttribute('aria-hidden', 'true');
+        current = hi;
+        screens[hi].classList.add('is-active');
+        screens[hi].setAttribute('aria-hidden', 'false');
+        break;
+      }
+    }
+  }
+
+  updateChrome();
+  revealScreen(screens[current]);
+  if (screens[current]._onEnter) screens[current]._onEnter();
+})();

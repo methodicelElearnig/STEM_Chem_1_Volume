@@ -1,0 +1,498 @@
+/* =====================================================================
+   STEM לומדה — reusable foundation stylesheet
+   Design tokens live in :root — retune these from the Figma design.
+   Structure/behaviour is generic and reused across all units.
+   ===================================================================== */
+
+/* ---- brand font (Assistant). Swap to local @font-face for offline. ---- */
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap');
+
+:root{
+  /* canvas */
+  --stage-w: 1920px;
+  --stage-h: 1080px;
+
+  /* palette — PLACEHOLDERS, replace with the approved design tokens */
+  --c-bg:        #eaf2f6;
+  --c-ink:       #1f2a30;
+  --c-primary:   #1c7293;
+  --c-primary-d: #125266;
+  --c-accent:    #f2a03d;
+  --c-card:      #ffffff;
+  --c-card-line: #d7e6ec;
+  --c-correct:   #2e8b57;
+  --c-incorrect: #c0392b;
+  --c-muted:     #6a7a82;
+
+  /* type scale (at 1:1 on the 1920×1080 stage) */
+  --fs-body: 30px;
+  --fs-stem: 38px;
+  --fs-title: 44px;
+
+  --radius: 18px;
+  --shadow: 0 10px 30px rgba(0,0,0,.12);
+  --focus: 3px solid #2b8cc4;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; height:100%; }
+body{
+  font-family:'Assistant',Arial,sans-serif;
+  color:var(--c-ink);
+  background:#0d1418;              /* letterbox behind the stage */
+  overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* ---------------------------------------------------------------
+   STAGE : fixed 1920×1080, scaled to fit via JS (--scale var).
+   All screen content is absolute-positioned at 1:1 design coords.
+   --------------------------------------------------------------- */
+.stage{
+  position:relative;
+  width:var(--stage-w); height:var(--stage-h);
+  flex:0 0 auto;
+  transform: scale(var(--scale,1));
+  transform-origin: center center;
+  background:var(--c-bg);
+  overflow:hidden;
+}
+
+/* ---- screens: only .is-active is shown ---- */
+.screen{
+  position:absolute; inset:0;
+  opacity:0; visibility:hidden;
+  transition:opacity .35s ease;
+}
+.screen.is-active{ opacity:1; visibility:visible; }
+.screen-bg{
+  position:absolute; inset:0;
+  width:100%; height:100%; object-fit:cover;
+}
+
+/* ---------------------------------------------------------------
+   CARD / TEXT BOX
+   --------------------------------------------------------------- */
+.card{
+  position:absolute;
+  background:var(--c-card);
+  border:1px solid var(--c-card-line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:32px 36px;
+  font-size:var(--fs-body); line-height:1.45;
+}
+.card p{ margin:0 0 .6em; }
+.card p:last-child{ margin-bottom:0; }
+.card h2{ font-size:var(--fs-title); margin:0 0 .5em; color:var(--c-primary-d); }
+
+/* ---------------------------------------------------------------
+   SPEECH BUBBLE TEXT (bubble graphic lives in the background image;
+   this is just the live text placed at the design coordinates)
+   --------------------------------------------------------------- */
+.speech{
+  position:absolute; display:flex; align-items:center; justify-content:center;
+  box-sizing:border-box; padding:10px 26px;
+  font-size:33px; line-height:1.3; font-weight:600;
+  color:#1a1a1a; text-align:center;
+}
+.speech p{ margin:0; }
+
+/* ---------------------------------------------------------------
+   FLOAT-IN REVEAL (elements fade + rise into place; staggered per
+   screen so multi-element screens reveal in order — as in the examples)
+   --------------------------------------------------------------- */
+.float-in{ opacity:0; transform:translateY(26px); }
+.float-in.is-in{ opacity:1; transform:translateY(0);
+  transition:opacity .5s ease, transform .5s ease; }
+@media (prefers-reduced-motion: reduce){
+  .float-in, .float-in.is-in{ opacity:1; transform:none; transition:none; }
+}
+/* feedback popup floats in (keeps its horizontal centering) */
+@keyframes fb-in{ from{ opacity:0; transform:translate(-50%,18px); }
+                  to{ opacity:1; transform:translate(-50%,0); } }
+/* correct/incorrect mark pops into the dot */
+@keyframes mark-pop{ 0%{ opacity:0; transform:scale(.2); }
+                     60%{ opacity:1; transform:scale(1.18); }
+                     100%{ opacity:1; transform:scale(1); } }
+
+/* ---------------------------------------------------------------
+   SPEECH BUBBLE as a positioned element (graphic + centered text) —
+   used where bubbles reveal dynamically (dialogue screens)
+   --------------------------------------------------------------- */
+.bubble{ position:absolute; pointer-events:none; }
+.bubble__img{ position:absolute; inset:0; width:100%; height:100%; }
+.bubble__text{ position:absolute; left:0; right:0; top:26px; bottom:58px;
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  padding:0 36px; font-size:30px; line-height:1.3; font-weight:600; color:#1a1a1a; }
+.bubble__text p{ margin:0; }
+/* bubble caption positioned to an exact spot inside a floating .bubble (moves with it) */
+.bcap{ position:absolute; display:flex; align-items:center; justify-content:center;
+  text-align:center; font-size:33px; line-height:1.34; font-weight:600; color:#1a1a1a; }
+.bcap p{ margin:0; }
+
+/* (speech bubbles use the original .bubble art, sized per bubble — see above) */
+
+/* live text overlaid on a baked-in bubble graphic (right-aligned RTL, translation-safe) */
+.btext{ position:absolute; font-size:33px; line-height:1.34; font-weight:600;
+  color:#1a1a1a; text-align:right; }
+.btext p{ margin:0; }
+/* teal "view through the microscope" tab label */
+.mlabel{ position:absolute; font-size:30px; line-height:1.18; font-weight:700;
+  color:#1a1a1a; text-align:center; }
+.mlabel p{ margin:0; }
+
+/* teal callout box text (calibration screens) — centered dark text over the baked box */
+.callout{ position:absolute; display:flex; align-items:center; justify-content:center;
+  text-align:center; font-size:30px; line-height:1.3; font-weight:600; color:#1a1a1a; padding:0 24px; }
+.callout p{ margin:0; }
+
+/* data-report table (screen 41) — live text over the baked grid */
+.rtitle{ position:absolute; font-size:52px; font-weight:800; color:#fff; white-space:nowrap; }
+.rhead{ position:absolute; font-size:33px; font-weight:700; color:#fff; white-space:nowrap; }
+.rcell{ position:absolute; font-size:33px; font-weight:600; color:#1a1a1a; white-space:nowrap; }
+
+/* ---------------------------------------------------------------
+   AVATAR (circular character bubble, placed at design coords)
+   --------------------------------------------------------------- */
+.avatar{ position:absolute; }
+
+/* positioned figure/diagram (e.g. a concept illustration that floats in) */
+.diagram{ position:absolute; }
+/* live equation + diagram labels (kept as text so they're translatable) */
+.eq{ position:absolute; text-align:center; font-size:48px; font-weight:400; color:#4e7a34; }
+.eq .k{ color:#111; font-weight:400; }   /* + and = signs in black */
+.eq .b{ font-weight:800; }               /* נפח הגוף — green + bold */
+.dlabel{ position:absolute; text-align:center; font-size:26px; line-height:1.35; color:#1f2a30; }
+.dlabel b{ display:block; font-size:36px; margin-bottom:6px; }
+
+/* ---------------------------------------------------------------
+   APPLET IFRAME (SME standalone applet embedded at design coords)
+   --------------------------------------------------------------- */
+.applet-frame{
+  position:absolute; border:none; border-radius:24px;
+  background:transparent; overflow:hidden;
+}
+
+/* ---------------------------------------------------------------
+   QUESTION + OPTIONS (single choice)
+   --------------------------------------------------------------- */
+.question__stem{ font-size:var(--fs-stem); margin:0 0 24px; }
+.options{ list-style:none; margin:0 0 24px; padding:0; display:grid; gap:16px; }
+.option{
+  display:flex; align-items:center; gap:14px;
+  padding:20px 24px;
+  background:#f6fafc; border:2px solid var(--c-card-line);
+  border-radius:14px; cursor:pointer; font-size:var(--fs-body);
+  transition:border-color .15s, background .15s;
+}
+.option:hover{ border-color:var(--c-primary); background:#eef6fa; }
+.option:focus-visible{ outline:var(--focus); outline-offset:2px; }
+.option[aria-checked="true"]{ border-color:var(--c-primary); background:#e2f0f6; }
+.option.is-correct{ border-color:var(--c-correct); background:#e8f6ee; }
+.option.is-incorrect{ border-color:var(--c-incorrect); background:#fbeceb; }
+.option.is-locked{ pointer-events:none; }
+
+/* ---------------------------------------------------------------
+   QUESTION PROGRESS (8 numbered circles, current one filled)
+   --------------------------------------------------------------- */
+.qprogress{
+  position:absolute; display:flex; gap:5px;
+  list-style:none; margin:0; padding:0;
+}
+.qprogress li{
+  width:62px; height:62px; border-radius:50%; box-sizing:border-box;
+  border:3px solid #2e9bd1; background:#fff; color:#2e9bd1;
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px; font-weight:800; line-height:1; padding-bottom:5px;
+}
+.qprogress li.is-active{ background:#2e9bd1; color:#fff; }
+
+/* ---------------------------------------------------------------
+   QUESTION STEM (positioned at design coords, RTL right-aligned)
+   --------------------------------------------------------------- */
+.qstem{ position:absolute; text-align:right; }
+.qstem h2{ margin:0 0 14px; font-size:34px; font-weight:800; color:#4e7a34; }
+/* all stem lines share one tight line spacing — bold lines are NOT extra-spaced */
+.qstem p{ margin:0; font-size:30px; line-height:1.42; color:#1f2a30; }
+.qstem p.q-bold{ font-weight:800; }
+
+/* ---------------------------------------------------------------
+   DOT-STYLE OPTIONS (radio dot on the right, label to its left)
+   --------------------------------------------------------------- */
+.options--dots{
+  position:absolute; list-style:none; margin:0; padding:0;
+  display:flex; flex-direction:column; gap:14px;
+}
+.options--dots .option{
+  display:flex; align-items:flex-start; gap:14px; justify-content:flex-start;
+  background:none; border:none; padding:2px; font-size:28px; line-height:1.3; cursor:pointer;
+}
+.options--dots .dot{ margin-top:4px; }
+/* short-answer variant (e.g. "40 מ\"ל") stays single-line + centered dots */
+.options--dots.options--short .option{ align-items:center; }
+.options--dots.options--short .dot{ margin-top:0; }
+/* compact variant for long options squeezed beside an image */
+.options--dots.options--compact .option{ font-size:24px; }
+.options--dots .option.is-correct,
+.options--dots .option.is-incorrect{ background:none; }
+.options--dots .dot{
+  width:24px; height:24px; border-radius:50%; box-sizing:border-box;
+  border:2.5px solid #64748b; background:#fff; flex:0 0 auto;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:15px; font-weight:800; line-height:1;
+  transition:background .25s ease, border-color .25s ease;
+}
+.options--dots .lbl{ color:#1f2a30; }
+/* neutral grey in every state (unselected outline + selected fill are the same colour) */
+.options--dots .option:hover .dot{ background:#eef1f4; }
+.options--dots .option[aria-checked="true"] .dot{ border-color:#64748b; background:#64748b; }
+/* result marks appear NEXT TO the answer (green check / red X inside the dot) */
+.options--dots .option.is-correct .dot{ border-color:var(--c-correct); background:var(--c-correct); }
+.options--dots .option.is-correct .dot::after{ content:'✓'; animation:mark-pop .32s ease both; }
+.options--dots .option.is-incorrect .dot{ border-color:var(--c-incorrect); background:var(--c-incorrect); }
+.options--dots .option.is-incorrect .dot::after{ content:'✕'; animation:mark-pop .32s ease both; }
+@media (prefers-reduced-motion: reduce){
+  .feedback{ animation:none; }
+  .options--dots .dot{ transition:none; }
+  .options--dots .option.is-correct .dot::after,
+  .options--dots .option.is-incorrect .dot::after{ animation:none; }
+}
+.options--dots .option:focus-visible{ outline:var(--focus); outline-offset:3px; border-radius:8px; }
+/* multi-select: square check-boxes instead of round radio dots */
+.options--checks .dot{ border-radius:6px; }
+
+/* fill-in-the-blank sentences with inline dropdowns */
+.qfill{ position:absolute; font-size:30px; line-height:2.1; font-weight:600; color:#1a1a1a; text-align:right; }
+.qfill p{ margin:0 0 22px; }
+.qselect{ font-family:inherit; font-size:25px; font-weight:700; color:#185fa5; background:#eaf3fb;
+  border:2px solid #2e9bd1; border-radius:10px; padding:3px 10px; margin:0 6px; vertical-align:middle; cursor:pointer; }
+.qselect:focus-visible{ outline:var(--focus); outline-offset:2px; }
+.qselect.is-correct{ border-color:var(--c-correct); background:#e8f6ee; color:#1b6b3a; }
+.qselect.is-incorrect{ border-color:var(--c-incorrect); background:#fbeceb; color:#a3271f; }
+
+/* drag-to-order: draggable cards + step slots */
+.dcard{ position:absolute; box-sizing:border-box; width:586px; min-height:98px; background:#fff;
+  border:2px solid #cbd5e1; border-radius:16px; padding:10px 18px; font-size:26px; font-weight:600;
+  color:#1a1a1a; text-align:center; line-height:1.3; cursor:grab; touch-action:none; user-select:none;
+  box-shadow:0 4px 10px rgba(0,0,0,.10); display:flex; align-items:center; justify-content:center; }
+.dcard.dragging{ cursor:grabbing; box-shadow:0 14px 28px rgba(0,0,0,.28); z-index:60; }
+.dcard.is-correct{ border-color:var(--c-correct); background:#e8f6ee; }
+.dcard.is-incorrect{ border-color:var(--c-incorrect); background:#fbeceb; }
+.dslot{ position:absolute; box-sizing:border-box; width:586px; height:98px; border:2px dashed #93c5fd;
+  border-radius:16px; background:rgba(255,255,255,.5); }
+.dslot.over{ border-color:#2e9bd1; background:#eaf3fb; }
+.dstep{ position:absolute; font-size:22px; font-weight:800; color:#1a1a1a; }
+.dhead{ position:absolute; font-size:23px; font-weight:800; color:#0f2740; }
+/* screen-37 feedback as a square panel on the (empty) left side, not a bottom popup */
+.feedback--left{ transform:none !important; animation-name:fb-in-left;
+  display:flex; flex-direction:column; justify-content:center; text-align:center; box-sizing:border-box; }
+@keyframes fb-in-left{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
+/* pre-filled (static) table cell, e.g. the "action" column in Q2ב */
+.dfixed{ position:absolute; box-sizing:border-box; font-size:23px; font-weight:600; color:#1a1a1a;
+  text-align:center; line-height:1.3; padding:6px 14px; display:flex; align-items:center; justify-content:center; }
+/* method popup button (top-left) + modal */
+.methodbtn{ position:absolute; left:44px; top:40px; width:118px; height:118px; border-radius:50%;
+  background:#0f2740; color:#fff; border:3px solid #fff; font-family:inherit; font-size:20px; font-weight:800;
+  line-height:1.18; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.3); }
+.methodbtn:hover{ background:#1d4a72; }
+.modal{ position:absolute; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:200; }
+.modal[hidden]{ display:none; }
+.modal__box{ position:relative; width:1040px; max-width:94%; }
+.modal__box iframe{ width:100%; height:860px; border:0; display:block; background:transparent; }
+.modal__close{ position:absolute; left:-18px; top:-18px; width:54px; height:54px; border-radius:50%;
+  background:#0f2740; color:#fff; border:3px solid #fff; font-size:26px; font-weight:800; cursor:pointer; }
+.modal__close:hover{ background:#1d4a72; }
+/* stage-1 wrong-answer prompt for drag questions */
+.dprompt{ position:absolute; left:230px; top:470px; width:520px; box-sizing:border-box;
+  background:#fff; border:2px solid var(--c-incorrect); border-radius:16px; padding:22px 28px;
+  text-align:center; font-size:26px; font-weight:600; color:#1a1a1a; box-shadow:0 12px 28px rgba(0,0,0,.22); }
+.dprompt__title{ margin:0 0 12px; font-size:32px; font-weight:800; color:var(--c-incorrect); }
+.dprompt p{ margin:0; }
+.dreveal{ color:#185fa5; font-weight:800; text-decoration:underline; cursor:pointer; }
+
+/* sample explorer (screens 5-6): cards fade in with narration, click opens an info popup */
+.card{ position:absolute; width:360px; height:506px; cursor:pointer; opacity:0; transform:translateY(24px);
+  transition:opacity .55s ease, transform .55s ease; perspective:1300px;
+  background:none; border:0; box-shadow:none; padding:0; border-radius:0; }
+.card.in{ opacity:1; transform:translateY(0); }
+.card.in:hover{ transform:translateY(-6px); }
+/* 3D flip */
+.card__inner{ position:absolute; inset:0; transform-style:preserve-3d;
+  transition:transform .6s cubic-bezier(.4,.15,.2,1); }
+.card.is-flipped .card__inner{ transform:rotateY(180deg); }
+.card__face{ position:absolute; inset:0; border-radius:24px; overflow:hidden;
+  -webkit-backface-visibility:hidden; backface-visibility:hidden; }
+.card__face--back{ transform:rotateY(180deg); text-align:center;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:112px 26px 40px; }
+.card__reverse{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+.card__title{ position:relative; margin:0 0 16px; font-size:32px; font-weight:800; color:#395536; }
+.card__desc{ position:relative; margin:0; font-size:27px; line-height:1.42; color:#1f2a30; }
+.card__bg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+.card__name{ position:absolute; left:0; right:0; top:334px; height:66px; display:flex; align-items:center;
+  justify-content:center; color:#fff; font-size:26px; font-weight:700; text-align:center; padding:0 12px; }
+.infopop{ position:absolute; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:200; }
+.infopop[hidden]{ display:none; }
+.infopop__box{ position:relative; width:780px; max-width:90%; background:#fff; border-radius:24px;
+  padding:38px 46px; box-shadow:0 30px 70px rgba(0,0,0,.5); text-align:center; }
+.infopop__box h3{ margin:0 0 16px; font-size:36px; font-weight:800; color:#4e7a34; }
+.infopop__box p{ margin:0; font-size:28px; line-height:1.5; color:#1f2a30; }
+.infopop__close{ position:absolute; left:-18px; top:-18px; width:54px; height:54px; border-radius:50%;
+  background:#0f2740; color:#fff; border:3px solid #fff; font-size:26px; font-weight:800; cursor:pointer; }
+.infopop__close:hover{ background:#1d4a72; }
+
+/* video screen: full-stage video + center play button + synced caption overlay */
+.videoscreen{ position:absolute; inset:0; background:#000; }
+.video-el{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.video-play{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:150px; height:150px; border-radius:50%; border:0; cursor:pointer; z-index:12;
+  background:rgba(15,39,64,.86); color:#fff; font-size:60px; line-height:1;
+  display:flex; align-items:center; justify-content:center; padding-left:10px;
+  box-shadow:0 12px 34px rgba(0,0,0,.45); transition:background .15s, transform .15s; }
+.video-play:hover{ background:#1d4a72; transform:translate(-50%,-50%) scale(1.05); }
+.video-play:focus-visible{ outline:4px solid #fff; outline-offset:4px; }
+.video-play.hidden{ display:none; }
+.video-cap{ position:absolute; left:50%; bottom:150px; transform:translateX(-50%);
+  max-width:1400px; width:max-content; padding:12px 30px; z-index:11;
+  background:rgba(0,0,0,.62); color:#fff; font-size:34px; line-height:1.35;
+  text-align:center; border-radius:12px; }
+.video-cap:empty{ display:none; }
+.video-cap.cc-hidden{ display:none; }
+/* custom video control bar (bottom, LTR media-control order) */
+.vctrls{ position:absolute; left:150px; right:150px; bottom:0; z-index:14; height:58px;
+  display:flex; align-items:center; gap:12px; padding:0 22px;
+  border-radius:12px 12px 0 0;
+  background:linear-gradient(to top, rgba(0,0,0,.78), rgba(0,0,0,.32)); }
+.vc-btn{ flex:0 0 auto; height:42px; min-width:42px; padding:0 10px; border:0; cursor:pointer;
+  background:transparent; color:#fff; font-size:22px; line-height:1; border-radius:6px;
+  display:flex; align-items:center; justify-content:center; }
+.vc-btn:hover{ background:rgba(255,255,255,.16); }
+.vc-btn:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+.vc-cc{ font-size:18px; font-weight:800; letter-spacing:1px; border:2px solid #fff; padding:0 12px; }
+.vc-cc.is-off{ opacity:.5; text-decoration:line-through; }
+.vc-time{ flex:0 0 auto; color:#fff; font-size:17px; min-width:46px; text-align:center;
+  font-variant-numeric:tabular-nums; }
+.vc-seek{ flex:1 1 auto; height:6px; cursor:pointer; accent-color:#2e9bd1; }
+.vc-vol{ flex:0 0 92px; width:92px; height:6px; cursor:pointer; accent-color:#2e9bd1; }
+/* closing סיום button + score card */
+.end-submit{ position:absolute; left:50%; bottom:150px; transform:translateX(-50%); z-index:20;
+  padding:18px 56px; border:0; border-radius:14px; cursor:pointer;
+  background:#2e9bd1; color:#fff; font-size:34px; font-weight:800;
+  box-shadow:0 12px 32px rgba(0,0,0,.4); }
+.end-submit:hover{ background:#3aabde; }
+.end-submit:focus-visible{ outline:4px solid #fff; outline-offset:3px; }
+.end-submit[hidden]{ display:none; }
+.endcard{ position:absolute; inset:0; z-index:30; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; gap:14px;
+  background:rgba(15,39,64,.9); color:#fff; }
+.endcard[hidden]{ display:none; }
+.endcard h2{ font-size:56px; font-weight:800; margin:0; }
+.endcard p{ font-size:42px; margin:0; }
+.endcard__note{ font-size:28px !important; color:#bfe0f2; }
+
+/* narration player bar (bottom, RTL: controls on the right, caption fills the left) */
+.player{ position:absolute; left:50%; bottom:40px; transform:translateX(-50%);
+  width:1500px; max-width:94%; display:flex; align-items:center; gap:24px; z-index:60;
+  background:rgba(15,39,64,.9); color:#fff; border-radius:20px; padding:16px 28px;
+  box-shadow:0 12px 34px rgba(0,0,0,.32); }
+.player__ctrls{ flex:0 0 auto; display:flex; gap:14px; }
+.player__btn{ width:60px; height:60px; border-radius:50%; border:0; cursor:pointer;
+  background:#2e9bd1; color:#fff; font-size:24px; line-height:1; display:flex;
+  align-items:center; justify-content:center; transition:background .15s; }
+.player__btn:hover{ background:#3aabde; }
+.player__btn:focus-visible{ outline:3px solid #fff; outline-offset:3px; }
+.player__btn--sec{ background:#3f5a74; font-size:26px; }
+.player__btn--sec:hover{ background:#4d6b88; }
+.player__cap{ flex:1; margin:0; font-size:30px; line-height:1.35; text-align:right; }
+
+/* check button: the design graphic as an image button (hides on feedback) */
+.check-btn{ position:absolute; padding:0; border:none; background:transparent; cursor:pointer; }
+.check-btn img{ width:100%; height:100%; display:block; }
+.check-btn:focus-visible{ outline:var(--focus); outline-offset:3px; border-radius:12px; }
+.check-btn[disabled]{ opacity:.55; cursor:default; }
+
+/* ---------------------------------------------------------------
+   BUTTONS
+   --------------------------------------------------------------- */
+.btn{
+  font-family:inherit; font-size:26px; font-weight:700;
+  padding:14px 34px; border-radius:12px; border:none; cursor:pointer;
+  background:var(--c-primary); color:#fff; transition:filter .15s;
+}
+.btn:hover{ filter:brightness(1.07); }
+.btn:focus-visible{ outline:var(--focus); outline-offset:3px; }
+.btn[disabled]{ opacity:.45; cursor:default; }
+.btn--hint{ background:transparent; color:var(--c-primary-d); text-decoration:underline; padding-inline:12px; }
+.btn--check,.btn--continue,.btn--restart{ margin-inline-start:8px; }
+
+.hint{
+  margin:16px 0 0; padding:16px 20px;
+  background:#fff8e9; border-inline-start:5px solid var(--c-accent);
+  border-radius:10px; font-size:26px;
+}
+
+/* ---------------------------------------------------------------
+   FEEDBACK PANEL
+   --------------------------------------------------------------- */
+.feedback{
+  position:absolute; left:50%; bottom:60px; transform:translateX(-50%);
+  width:1100px; max-width:calc(100% - 120px);
+  background:var(--c-card); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:28px 40px; z-index:5;
+}
+.feedback{ text-align:center; animation:fb-in .4s ease both; }
+.feedback__title{ font-size:34px; font-weight:800; margin:0 0 8px; }
+.feedback__body{ font-size:28px; line-height:1.4; margin:0; }
+.feedback.is-correct .feedback__title{ color:var(--c-correct); }
+.feedback.is-incorrect .feedback__title{ color:var(--c-incorrect); }
+
+/* ---------------------------------------------------------------
+   VIDEO PLACEHOLDER  (real <video> dropped in later)
+   --------------------------------------------------------------- */
+.video-placeholder{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  background:repeating-linear-gradient(45deg,#243b45 0 40px,#1c2f38 40px 80px);
+  color:#cfe6f0;
+}
+.video-placeholder__label{
+  font-size:40px; font-weight:700; padding:20px 34px;
+  border:3px dashed #7fb6cc; border-radius:16px; background:rgba(0,0,0,.25);
+}
+
+/* ---------------------------------------------------------------
+   END SCREEN
+   --------------------------------------------------------------- */
+.end-card{ text-align:center; }
+.end-card .score{ font-size:34px; margin:18px 0 26px; }
+
+/* ---------------------------------------------------------------
+   NAVIGATION BUTTONS (inside the stage, at the design coordinates)
+   forward = bottom-left (RTL), back = bottom-right, ~105px circles
+   --------------------------------------------------------------- */
+.navbtn{
+  position:absolute; width:105px; height:105px;
+  padding:0; border:none; background:none; cursor:pointer; z-index:20;
+}
+.navbtn img{ width:100%; height:100%; display:block; }
+.navbtn:hover{ filter:brightness(1.08); }
+.navbtn:focus-visible{ outline:var(--focus); outline-offset:4px; border-radius:50%; }
+.navbtn[disabled]{ opacity:.3; cursor:default; }
+.navbtn--fwd{ left:24px;   top:935px; }
+.navbtn--back{ left:1780px; top:935px; }
+/* blink the forward arrow when it appears after a correct answer */
+.navbtn.nav-pulse{ animation:navpulse 1s ease-in-out infinite; }
+@keyframes navpulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.14); } }
+@media (prefers-reduced-motion: reduce){ .navbtn.nav-pulse{ animation:none; } }
+
+/* ---------------------------------------------------------------
+   accessibility helpers
+   --------------------------------------------------------------- */
+[hidden]{ display:none !important; }
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+@media (prefers-reduced-motion: reduce){
+  .screen{ transition:none; }
+}
