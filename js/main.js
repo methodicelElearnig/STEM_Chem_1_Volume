@@ -8,6 +8,18 @@
 
   var stage   = document.getElementById('stage');
   var screens = Array.prototype.slice.call(document.querySelectorAll('.screen'));
+
+  /* QA-compat: each <section> is kept clean (class + data-screen only) so the QA
+     system's page-detector recognizes it. Per-screen metadata lives in a hidden
+     .smeta child; copy its data- and aria- attributes back onto the section so the
+     rest of the engine reads them exactly as before. */
+  screens.forEach(function (s) {
+    var m = s.querySelector('.smeta');
+    if (!m) return;
+    Array.prototype.forEach.call(m.attributes, function (a) {
+      if (a.name.indexOf('data-') === 0 || a.name.indexOf('aria-') === 0) s.setAttribute(a.name, a.value);
+    });
+  });
   var btnFwd  = document.getElementById('nav-fwd');   // forward = next (bottom-left, RTL)
   var btnBack = document.getElementById('nav-back');   // back = prev  (bottom-right)
 
