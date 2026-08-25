@@ -15,7 +15,8 @@
   <section class="screen active" data-screen="1">
     <div class="smeta" data-type="video" data-gate="video" aria-hidden="false" hidden></div>
     <div class="videoscreen">
-      <video class="video-el" src="assets/video/Chem1_Video1.mp4" playsinline preload="auto"></video>
+      <video class="video-el" src="assets/video/Chem1_Video1.mp4?v=3" playsinline preload="auto"></video>
+      <img class="video-logo" src="assets/images/logo-moe.png" alt="משרד החינוך – מינהל חדשנות וטכנולוגיה">
       <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
       <div class="video-cap" data-vcap aria-live="polite"></div>
       <div class="vctrls" dir="ltr">
@@ -30,43 +31,15 @@
       </div>
     </div>
     <!-- captions as live text (translation-safe); times in seconds -->
-    <div class="vcap-src" data-end="15.5" hidden>
-      <span data-t="5.1">שלום וברוכים הבאים לתחנת העגינה!</span>
-      <span data-t="8.4">רכב החלל פרק הרגע ארבע דגימות ירח שנאספו בשטח.</span>
-      <span data-t="13.0">אלו פיסות היסטוריה מהירח.</span>
-    </div>
-  </section>
-
-  <!-- ===== SCREEN 3 — mission briefing video (Gal + Shira talking heads) ===== -->
-  <section class="screen" data-screen="2">
-    <div class="smeta" data-type="video" data-gate="video" aria-hidden="true" hidden></div>
-    <div class="videoscreen">
-      <video class="video-el" src="assets/video/Chem1_Video3.mp4?v=2" playsinline preload="auto"></video>
-      <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
-      <div class="video-cap" data-vcap aria-live="polite"></div>
-      <div class="vctrls" dir="ltr">
-        <button class="vc-btn" type="button" data-play aria-label="נגן או השהה">▶</button>
-        <span class="vc-time" data-cur>0:00</span>
-        <input class="vc-seek" type="range" min="0" max="1000" value="0" step="1" data-seek aria-label="סרגל התקדמות">
-        <span class="vc-time" data-dur>0:00</span>
-        <button class="vc-btn vc-cc" type="button" data-cc aria-pressed="true" aria-label="הצגת כתוביות">CC</button>
-        <button class="vc-btn" type="button" data-mute aria-label="השתקה">🔊</button>
-        <input class="vc-vol" type="range" min="0" max="100" value="100" step="1" data-vol aria-label="עוצמת שמע">
-        <button class="vc-btn" type="button" data-full aria-label="מסך מלא">⛶</button>
-      </div>
-    </div>
-    <!-- captions as live text (translation-safe); times in seconds -->
-    <div class="vcap-src" data-end="21.86" hidden>
-      <span data-t="0.3">המשימה שלנו היא למדוד ולתעד את נתוני המסה והנפח שלהן בדוח,</span>
-      <span data-t="4.77">כדי שנוכל להתאים להן אריזות ולשלוח אותן באופן בטוח לכדור הארץ.</span>
-      <span data-t="9.42">יש לדייק במדידות! אריזה קטנה מדי לא תיסגר,</span>
-      <span data-t="13.6">ובאריזה גדולה מדי הדגימה תיטלטל ותישבר בטיסה.</span>
-      <span data-t="18.15">ההתאמה חייבת להיות מושלמת. הצוות מוכן להתחיל?</span>
+    <div class="vcap-src" data-end="12.2" hidden>
+      <span data-t="0.2">שלום וברוכים הבאים לתחנת העגינה!</span>
+      <span data-t="3.1">רכב החלל פרק הרגע ארבע דגימות ירח שנאספו בשטח.</span>
+      <span data-t="8.7">אלו פיסות היסטוריה מהירח.</span>
     </div>
   </section>
 
   <!-- ===== SCREENS 5-6 — sample explorer (narration + card reveal + flip cards) ===== -->
-  <section class="screen" data-screen="3">
+  <section class="screen" data-screen="2">
     <div class="smeta" data-type="content" data-gate="explore" aria-hidden="true" hidden></div>
     <img class="screen-bg" src="assets/images/bg-5b.jpg?v=1" alt="מעבדת ירח, ארבע דגימות סלע ירחי להיכרות">
     <audio src="assets/Video2_Shira_narration.mp3" preload="auto"></audio>
@@ -75,7 +48,7 @@
       <div class="bubble__text" style="top:6px; bottom:16px; padding:0 42px; font-size:28px;"><p style="white-space:nowrap;">לחצו על כל דגימה כדי לקבל מידע.</p></div>
     </div>
 
-    <div class="card" data-order="1" data-key="mare" role="button" tabindex="0" aria-pressed="false" aria-label="בָּזֶלֶת מָארֶה - הפכו לפרטים" style="left:138px; top:314px;">
+    <div class="card" data-order="1" data-key="mare" role="button" tabindex="0" aria-pressed="false" aria-label="בָּזֶלֶת מָארֶה - הפכו לפרטים" style="left:1419px; top:314px;">
       <div class="card__inner">
         <div class="card__face card__face--front">
           <img class="card__bg" src="assets/images/card-mare.png" alt=""><div class="card__name">בָּזֶלֶת מָארֶה</div>
@@ -83,11 +56,11 @@
         <div class="card__face card__face--back">
           <img class="card__reverse" src="assets/images/card-reverse.png" alt="">
           <h3 class="card__title">בָּזֶלֶת מָארֶה</h3>
-          <p class="card__desc">סלע געשי כהה שנוצר מלבה שהתקררה על פני הירח. הוא מרכיב את האזורים הכהים שעל הירח ועשיר בברזל ומגנזיום.</p>
+          <p class="card__desc">סלע געשי כהה, עשיר בברזל ומגנזיום, שנוצר מלבה שהתקררה על פני הירח. ממנו עשויים האזורים הכהים שעל הירח.</p>
         </div>
       </div>
     </div>
-    <div class="card" data-order="2" data-key="vesic" role="button" tabindex="0" aria-pressed="false" aria-label="בָּזֶלֶת נַקְבּוּבִית - הפכו לפרטים" style="left:565px; top:314px;">
+    <div class="card" data-order="2" data-key="vesic" role="button" tabindex="0" aria-pressed="false" aria-label="בָּזֶלֶת נַקְבּוּבִית - הפכו לפרטים" style="left:992px; top:314px;">
       <div class="card__inner">
         <div class="card__face card__face--front">
           <img class="card__bg" src="assets/images/card-vesic.png" alt=""><div class="card__name">בָּזֶלֶת נַקְבּוּבִית</div>
@@ -99,7 +72,7 @@
         </div>
       </div>
     </div>
-    <div class="card" data-order="3" data-key="anor" role="button" tabindex="0" aria-pressed="false" aria-label="אָנוֹרְתוֹזִיט - הפכו לפרטים" style="left:992px; top:314px;">
+    <div class="card" data-order="3" data-key="anor" role="button" tabindex="0" aria-pressed="false" aria-label="אָנוֹרְתוֹזִיט - הפכו לפרטים" style="left:565px; top:314px;">
       <div class="card__inner">
         <div class="card__face card__face--front">
           <img class="card__bg" src="assets/images/card-anor.png" alt=""><div class="card__name">אָנוֹרְתוֹזִיט</div>
@@ -107,11 +80,11 @@
         <div class="card__face card__face--back">
           <img class="card__reverse" src="assets/images/card-reverse.png" alt="">
           <h3 class="card__title">אָנוֹרְתוֹזִיט</h3>
-          <p class="card__desc">סלע גבישי בהיר מאוד שנוצר בתקופה קדומה ומרכיב את רוב הרמות הגבוהות של הירח (האזורים הבהירים).</p>
+          <p class="card__desc">סלע גבישי בהיר מאוד שנוצר בתקופה קדומה ושממנו בנויות רוב הרמות הגבוהות של הירח (האזורים הבהירים).</p>
         </div>
       </div>
     </div>
-    <div class="card" data-order="4" data-key="regolith" role="button" tabindex="0" aria-pressed="false" aria-label="רֶגוֹלִית אָבָק יְרֵחִי - הפכו לפרטים" style="left:1419px; top:314px;">
+    <div class="card" data-order="4" data-key="regolith" role="button" tabindex="0" aria-pressed="false" aria-label="רֶגוֹלִית אָבָק יְרֵחִי - הפכו לפרטים" style="left:138px; top:314px;">
       <div class="card__inner">
         <div class="card__face card__face--front">
           <img class="card__bg" src="assets/images/card-regolith.png?v=4" alt=""><div class="card__name">רֶגוֹלִית - אָבָק יְרֵחִי</div>
@@ -134,6 +107,38 @@
     </div>
   </section>
 
+  <!-- ===== mission briefing video (Gal + Shira talking heads) — placed after the sample explorer ===== -->
+  <section class="screen" data-screen="3">
+    <div class="smeta" data-type="video" data-gate="video" aria-hidden="true" hidden></div>
+    <div class="videoscreen">
+      <video class="video-el" src="assets/video/Chem1_Video3.mp4?v=3" playsinline preload="auto"></video>
+      <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
+      <div class="video-cap" data-vcap aria-live="polite"></div>
+      <div class="vctrls" dir="ltr">
+        <button class="vc-btn" type="button" data-play aria-label="נגן או השהה">▶</button>
+        <span class="vc-time" data-cur>0:00</span>
+        <input class="vc-seek" type="range" min="0" max="1000" value="0" step="1" data-seek aria-label="סרגל התקדמות">
+        <span class="vc-time" data-dur>0:00</span>
+        <button class="vc-btn vc-cc" type="button" data-cc aria-pressed="true" aria-label="הצגת כתוביות">CC</button>
+        <button class="vc-btn" type="button" data-mute aria-label="השתקה">🔊</button>
+        <input class="vc-vol" type="range" min="0" max="100" value="100" step="1" data-vol aria-label="עוצמת שמע">
+        <button class="vc-btn" type="button" data-full aria-label="מסך מלא">⛶</button>
+      </div>
+    </div>
+    <!-- captions as live text (translation-safe); times in seconds -->
+    <div class="vcap-src" data-end="22.38" hidden>
+      <span data-t="0.0">המשימה שלנו היא למדוד ולתעד בדוח</span>
+      <span data-t="2.22">את נתוני המסה והנפח של הדגימות</span>
+      <span data-t="4.62">כדי שנוכל להתאים להן אריזות ולשלוח</span>
+      <span data-t="6.92">אותן באופן בטוח לכדור הארץ</span>
+      <span data-t="8.98">יש לדייק במדידות!</span>
+      <span data-t="11.28">אריזה קטנה מדי לא תיסגר</span>
+      <span data-t="13.44">ובאריזה גדולה מדי הדגימה תטלטל ותישבר בטיסה.</span>
+      <span data-t="17.02">ההתאמה חייבת להיות מושלמת.</span>
+      <span data-t="20.09">הצוות מוכן להתחיל?</span>
+    </div>
+  </section>
+
   <!-- ===== SCREEN 9 — content ===== -->
   <section class="screen" data-screen="4">
     <div class="smeta" data-type="content" aria-hidden="true" hidden></div>
@@ -142,28 +147,28 @@
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
       <img class="bubble__img" src="assets/images/bubble-9.png" alt="">
       <div class="bcap" style="left:845px; top:30px; width:1040px; height:120px;">
-        <p>לפני שניגש למכשירי המדידה, בואו נוודא שאנחנו מבינים אילו נתונים נרצה למדוד. נתחיל ב-נפח. זהו המקום שגוף או חומר תופסים במרחב.</p>
+        <p>לפני שניגש למכשירי המדידה, בואו נוודא שאנחנו מבינים אילו נתונים נרצה למדוד. נתחיל בנפח. נפח הוא המקום שגוף או חומר תופסים במרחב.</p>
       </div>
     </div>
   </section>
 
   <!-- ===== SCREEN 10 — question Q1 (sentence-length options) ===== -->
   <section class="screen" data-screen="5">
-    <div class="smeta" data-type="question" data-qid="q1" data-answer="4" data-points="12.5" data-fb-correct="תפיסת מקום במרחב (נפח) היא תכונה של כל חומר בטבע. לא משנה אם הוא מוצק קשיח כמו סלע, נוזל שזורם כמו מים, או גז שקוף ובלתי נראה – כולם תופסים מקום." data-fb-incorrect="תפיסת מקום במרחב (נפח) היא תכונה של כל חומר בטבע. לא משנה אם הוא מוצק קשיח כמו סלע, נוזל שזורם כמו מים, או גז שקוף ובלתי נראה – כולם תופסים מקום." aria-hidden="true" hidden></div>
+    <div class="smeta" data-type="question" data-qid="q1" data-answer="4" data-points="12.5" data-fb-correct="תפיסת מקום במרחב (נפח) היא תכונה של כל חומר בטבע. לא משנה אם הוא מוצק וקשיח כמו סלע, נוזל שזורם כמו מים או גז שקוף ובלתי נראה – כולם תופסים מקום." data-fb-incorrect="תפיסת מקום במרחב (נפח) היא תכונה של כל חומר בטבע. לא משנה אם הוא מוצק וקשיח כמו סלע, נוזל שזורם כמו מים או גז שקוף ובלתי נראה – כולם תופסים מקום." aria-hidden="true" hidden></div>
     <img class="screen-bg" src="assets/images/bg-10.jpg"
          alt="שאלה 1: שלושה כלים על השולחן — צלחת עם סלע, כלי מים ושפופרת גז">
     <ol class="qprogress" data-active="1" data-total="8" aria-label="התקדמות בשאלות" style="left:1266px; top:42px;"></ol>
     <div class="qstem" style="left:284px; top:170px; width:772px;">
       <h2>שאלה 1:</h2>
-      <p>על השולחן מונחים שלושה כלים: צלחת עליה מונח סלע, כלי זכוכית המכיל מים ושפורפרת המכילה גז מסביבת הירח.</p>
+      <p>על השולחן מונחים שלושה כלים: צלחת שעליה מונח סלע, כלי זכוכית המכיל מים ושפורפרת המכילה גז מסביבת הירח.</p>
       <p class="q-bold">איזה מהם תופס מקום במרחב?</p>
       <p class="q-bold">סמנו את התשובה הנכונה.</p>
     </div>
     <ul class="options options--dots" role="radiogroup" aria-label="אפשרויות תשובה"
         style="left:290px; top:445px; width:764px;">
-      <li class="option" role="radio" tabindex="0" data-value="1"><span class="dot"></span><span class="lbl">רק החומר המוצק - הסלע.</span></li>
-      <li class="option" role="radio" tabindex="0" data-value="2"><span class="dot"></span><span class="lbl">רק החומר המוצק והחומר הנוזלי - הסלע והמים.</span></li>
-      <li class="option" role="radio" tabindex="0" data-value="3"><span class="dot"></span><span class="lbl">רק החומר הנוזלי והגז - המים והגז.</span></li>
+      <li class="option" role="radio" tabindex="0" data-value="1"><span class="dot"></span><span class="lbl">רק החומר המוצק – הסלע.</span></li>
+      <li class="option" role="radio" tabindex="0" data-value="2"><span class="dot"></span><span class="lbl">רק החומר המוצק והחומר הנוזלי – הסלע והמים.</span></li>
+      <li class="option" role="radio" tabindex="0" data-value="3"><span class="dot"></span><span class="lbl">רק החומר הנוזלי והגז – המים והגז.</span></li>
       <li class="option" role="radio" tabindex="0" data-value="4"><span class="dot"></span><span class="lbl">כל שלושת החומרים – לכל חומר בטבע, בכל מצב צבירה, יש נפח.</span></li>
     </ul>
     <button class="btn--check check-btn" type="button" aria-label="בדיקה" hidden
@@ -198,7 +203,7 @@
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
       <img class="bubble__img" src="assets/images/bubble-13.png" alt="">
       <div class="bcap" style="left:316px; top:270px; width:568px; height:221px;">
-        <p>לדגימות הסלעים אין צורה הנדסית מוגדרת, לכן נשתמש בשיטת "דחיקת מים" על מנת לחשב את נפחן.</p>
+        <p>לדגימות הסלעים אין צורה הנדסית מוגדרת, לכן נשתמש בשיטת "דחיקת מים" כדי לחשב את נפחן.</p>
       </div>
     </div>
   </section>
@@ -218,14 +223,14 @@
     </div>
     <iframe class="applet-frame" src="applets/displacement.html"
             title="יישומון: מדידת נפח באמצעות דחיקת מים" allowtransparency="true" scrolling="no"
-            style="left:452px; top:275px; width:1016px; height:700px;"></iframe>
+            style="left:200px; top:240px; width:1520px; height:840px;"></iframe>
   </section>
 
   <!-- ===== SCREENS 15-16 — measurement montage video (Gal measures, porous basalt floats, Shira proposes weight method) ===== -->
   <section class="screen" data-screen="9">
     <div class="smeta" data-type="video" data-gate="video" aria-hidden="true" hidden></div>
     <div class="videoscreen">
-      <video class="video-el" src="assets/video/Chem1_Video4.mp4?v=2" playsinline preload="auto"></video>
+      <video class="video-el" src="assets/video/Video4.mp4?v=1" playsinline preload="auto"></video>
       <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
       <div class="video-cap" data-vcap aria-live="polite"></div>
       <div class="vctrls" dir="ltr">
@@ -240,15 +245,15 @@
       </div>
     </div>
     <!-- captions as live text (translation-safe); times in seconds. Empty span at 12.4 clears during the float beat -->
-    <div class="vcap-src" data-end="29.17" hidden>
-      <span data-t="0.9">יופי, הצוות סיים למדוד בשיטה זו את נפח הדגימות של סלע האנורתוזיט ושל סלע הבזלת מארה.</span>
-      <span data-t="9.62">נעבור למדידת נפח סלע הבזלת הנקבובית.</span>
-      <span data-t="12.4"></span>
-      <span data-t="17.69">דגימת הבזלת הנקבובית צפה על פני המים.</span>
-      <span data-t="21.54">אי אפשר למדוד כך את נפחה!</span>
-      <span data-t="23.71">נשתמש בשיטה עקיפה עם משקולת.</span>
-      <span data-t="26.43">אנחנו צריכים לבנות תהליך מדידה מבוקר.</span>
-      <span data-t="27.74">נוסיף את התוצאות לדוח הנתונים.</span>
+    <div class="vcap-src" data-end="22.42" hidden>
+      <span data-t="0.0">יופי, הצוות סיים למדוד בשיטה זו את נפח הדגימות</span>
+      <span data-t="3.28">של סלע האנורתוזיט ושל סלע הבזלת מארה</span>
+      <span data-t="6.52">נעבור למדידת נפח סלע הבזלת הנקבובית</span>
+      <span data-t="9.58">נוסיף את התוצאות לדוח הנתונים</span>
+      <span data-t="12.26">דגימת הבזלת הנקבובית צפה על פני המים</span>
+      <span data-t="15.48">אי אפשר למדוד את נפחה</span>
+      <span data-t="17.56">נשתמש בשיטה עקיפה עם משקולת</span>
+      <span data-t="19.98">אנחנו צריכים לבנות תהליך מדידה מבוקר</span>
     </div>
   </section>
 
@@ -291,7 +296,7 @@
 
   <!-- ===== SCREEN 19 — question Q2ב (drag reason to each step) + method popup ===== -->
   <section class="screen" data-screen="11">
-    <div class="smeta" data-type="question" data-qid="q2b" data-points="6.25" data-fb-correct="הצלחתם להבין לא רק את סדר הפעולות במדידת הנפח, אלא גם את חשיבותן להבטחת הדיוק במדידה. במדע חשוב ה־&quot;למה&quot; (הנימוק לפעולה) לא פחות מה־&quot;איך&quot; (הפעולה עצמה)." data-fb-incorrect="לא מדויק. מודדים את המשקולת לבדה כדי שנוכל לחסר אותה בהמשך. מצמידים את המשקולת לדגימה כדי שהדגימה תשקע ותדחק מים. מחסרים את נפח המשקולת כדי לקבל את נפח הדגימה בלבד." aria-hidden="true" hidden></div>
+    <div class="smeta" data-type="question" data-qid="q2b" data-points="6.25" data-fb-correct="הצלחתם להבין לא רק את סדר הפעולות במדידת הנפח, אלא גם את חשיבותן להבטחת הדיוק במדידה. במדע חשוב ה־&quot;למה&quot; (הנימוק לפעולה) לא פחות מה־&quot;איך&quot; (הפעולה עצמה)." data-fb-incorrect="חשוב להבין לא רק את סדר הפעולות במדידת הנפח, אלא גם את חשיבותן להבטחת הדיוק במדידה. במדע חשוב ה־&quot;למה&quot; (הנימוק לפעולה) לא פחות מה־&quot;איך&quot; (הפעולה עצמה)." aria-hidden="true" hidden></div>
     <img class="screen-bg" src="assets/images/bg-19.jpg"
          alt="שאלה 2ב: גררו את הנימוק המדעי המתאים לכל שלב מדידה">
     <ol class="qprogress" data-active="2" data-total="8" aria-label="התקדמות בשאלות" style="left:1266px; top:42px;"></ol>
@@ -353,8 +358,8 @@
          alt="שירה מצביעה על המשורה שבה משקולת ודגימת סלע שקועות במים">
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
       <img class="bubble__img" src="assets/images/bubble-22.png" alt="">
-      <div class="bcap" style="left:400px; top:175px; width:790px; height:255px;">
-        <p>ביצעתי את המדידה בדיוק לפי השלבים שקבעתם. תחילה, מדדתי את המשקולת לבדה – נפחה הוא 15 מ"ל. לאחר מכן, קשרתי אליה את דגימת הסלע הצפה והשקעתי את שניהם יחד במים. הנפח המשותף של שניהם יחד הוא 50 מ"ל.</p>
+      <div class="bcap" style="left:475px; top:175px; width:640px; height:255px;">
+        <p>ביצעתי את המדידה בדיוק לפי השלבים שקבעתם. תחילה מדדתי את המשקולת לבדה – נפחה הוא 15 מ"ל. לאחר מכן קשרתי אליה את דגימת הסלע הצפה והשקעתי את שניהם יחד במים. הנפח המשותף של שניהם יחד הוא 50 מ"ל.</p>
       </div>
     </div>
   </section>
@@ -392,6 +397,27 @@
          style="left:50%; top:700px; width:1100px; bottom:auto; transform:translateX(-50%);" hidden>
       <p class="feedback__title"></p>
       <p class="feedback__body"></p>
+    </div>
+
+    <!-- correct-answer report view: revealed on a correct answer; bg swaps to the empty
+         bench (data-fb-bg). Regolith stays empty (—) — it is measured only later (screen 25). -->
+    <div class="fb-report" hidden>
+      <!-- panel = baked frame + cylinder (no text); Hebrew is live text overlaid on top,
+           positioned to the baked bands so it stays translatable to Arabic (like screen 25) -->
+      <div class="report-panel" style="left:1113px; top:352px; width:634px; height:375px;">
+        <img class="report-panel__bg" src="assets/images/report-panel-23b.png?v=1" alt="">
+        <div class="rp-title" style="left:30px; top:3px; width:362px; height:72px; line-height:72px;">דוח נתונים</div>
+        <div class="rp-h rp-name" style="left:195px; top:75px; width:197px; height:47px; line-height:47px;">דגימת הסלע</div>
+        <div class="rp-h rp-vol"  style="left:30px;  top:75px; width:165px; height:47px; line-height:47px;">נפח</div>
+        <div class="rp-c rp-name" style="left:195px; top:122px; width:197px; height:48px; line-height:48px;">אָנוֹרְתוֹזִיט</div>
+        <div class="rp-c rp-vol"  style="left:30px;  top:122px; width:165px; height:48px; line-height:48px;">30 מ"ל</div>
+        <div class="rp-c rp-name" style="left:195px; top:170px; width:197px; height:47px; line-height:47px;">בָּזֶלֶת מָארֶה</div>
+        <div class="rp-c rp-vol"  style="left:30px;  top:170px; width:165px; height:47px; line-height:47px;">33 מ"ל</div>
+        <div class="rp-c rp-name" style="left:195px; top:217px; width:197px; height:47px; line-height:47px;">בָּזֶלֶת נַקְבּוּבִית</div>
+        <div class="rp-c rp-vol"  style="left:30px;  top:217px; width:165px; height:47px; line-height:47px;">35 מ"ל</div>
+        <div class="rp-c rp-name" style="left:195px; top:264px; width:197px; height:47px; line-height:47px;">רֶגוֹלִית</div>
+        <div class="rp-c rp-vol"  style="left:30px;  top:264px; width:165px; height:47px; line-height:47px;">---</div>
+      </div>
     </div>
   </section>
 
@@ -450,13 +476,13 @@
     </div>
     <div class="bubble" data-reveal data-reveal-order="1" style="left:0; top:0; width:1920px; height:1080px;">
       <img class="bubble__img" src="assets/images/bubble-28R.png" alt="">
-      <div class="bcap" style="left:1245px; top:290px; width:490px; height:190px;"><p>חכה רגע, גל. בוא נחשוב כמו מדענים. האם הנתון שנפח החללים בסלע שווה ל-7 מ"ל מאפשר לנו לקבוע בוודאות כי בסלע כלוא גז מהירח?</p></div>
+      <div class="bcap" style="left:1245px; top:290px; width:490px; height:190px;"><p>חכה רגע, גל. בוא נחשוב כמו מדענים. האם הנתון שלפיו נפח החללים בסלע שווה ל-7 מ"ל, מאפשר לנו לקבוע בוודאות כי בסלע כלוא גז מהירח?</p></div>
     </div>
   </section>
 
   <!-- ===== SCREEN 29 — question Q5 ===== -->
   <section class="screen" data-screen="17">
-    <div class="smeta" data-type="question" data-qid="q5" data-answer="2" data-points="12.5" data-fb-correct="חשוב להבין את ההבדל בין המדידה לבין הפרשנות שלה. הנתון של 7 מ&quot;ל הוא ראיה מדעית לקיומם של חללים בסלע, אך הוא אינו מאפשר לנו להסיק מה נמצא בתוכם." data-fb-incorrect="חשוב להבין את ההבדל בין המדידה לבין הפרשנות שלה. הנתון של 7 מ&quot;ל הוא ראיה מדעית לקיומם של חללים בסלע, אך הוא אינו מאפשר לנו להסיק מה נמצא בתוכם." aria-hidden="true" hidden></div>
+    <div class="smeta" data-type="question" data-qid="q5" data-answer="2" data-points="12.5" data-fb-correct="חשוב להבין את ההבדל בין המדידה לבין הפרשנות שלה. הנתון של 7 מ&quot;ל הוא ראיה מדעית לקיומם של חללים בסלע, אך הוא אינו מאפשר לנו להסיק מה נמצא בתוכם. במדע, מסקנה חייבת להיות מבוססת ישירות על הראיות שבידינו. כדי לקבוע שיש שם גז, נזדקק לראיות נוספות ממכשירי מדידה אחרים." data-fb-incorrect="חשוב להבין את ההבדל בין המדידה לבין הפרשנות שלה. הנתון של 7 מ&quot;ל הוא ראיה מדעית לקיומם של חללים בסלע, אך הוא אינו מאפשר לנו להסיק מה נמצא בתוכם. במדע, מסקנה חייבת להיות מבוססת ישירות על הראיות שבידינו. כדי לקבוע שיש שם גז, נזדקק לראיות נוספות ממכשירי מדידה אחרים." aria-hidden="true" hidden></div>
     <img class="screen-bg" src="assets/images/bg-29.jpg" alt="שאלה 5: האם יש גז כלוא בחללי הסלע">
     <ol class="qprogress" data-active="5" data-total="8" aria-label="התקדמות בשאלות" style="left:1266px; top:42px;"></ol>
     <div class="qstem" style="left:284px; top:170px; width:772px;">
@@ -474,6 +500,14 @@
     <div class="feedback" role="status" aria-live="polite" style="left:50%; top:715px; width:1100px; bottom:auto; transform:translateX(-50%);" hidden>
       <p class="feedback__title"></p><p class="feedback__body"></p>
     </div>
+
+    <!-- "did you know" popup: floats in with the feedback, above the rock image.
+         info-17.png is the bubble+lightbulb only; the Hebrew is live text (translatable). -->
+    <div class="fb-extra info-pop" style="left:1131px; top:155px; width:603px; height:258px;" hidden>
+      <img class="info-pop__bg" src="assets/images/info-17.png?v=1" alt="">
+      <div class="info-pop__title" style="left:25px; top:48px; width:415px;">הידעת</div>
+      <div class="info-pop__body" style="left:25px; top:114px; width:487px;">בבדיקת סלעי בזלת נקבוביים מהירח גילו מדענים שרוב הנקבוביות רֵיקוֹת מחומר <span style="white-space:nowrap">(רִיק -ואקום כמעט מוחלט).</span></div>
+    </div>
   </section>
 
   <!-- ===== SCREEN 31 — dialogue (regolith) + microscope view ===== -->
@@ -484,7 +518,7 @@
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
       <img class="bubble__img" src="assets/images/bubble-31R.png" alt="">
       <div class="btext" style="left:814px; top:72px; width:660px;">
-        <p>הגענו לדגימה האחרונה - הרֶגוֹלִית (אבק הירח).<br>החומר נשפך ומקבל את צורת הכלי ממש כמו מים.<br>לדעתי זהו נוזל, אפשר פשוט למזוג אותו למשורה ריקה<br>ולמדוד את נפחו.</p>
+        <p>הגענו לדגימה האחרונה – הרֶגוֹלִית (אבק הירח).<br>החומר נשפך ומקבל את צורת הכלי ממש כמו מים.<br>לדעתי זהו נוזל, אפשר פשוט למזוג אותו למשורה ריקה<br>ולמדוד את נפחו.</p>
       </div>
     </div>
     <div class="bubble" data-reveal data-reveal-order="1" style="left:0; top:0; width:1920px; height:1080px;">
@@ -509,7 +543,7 @@
 
     <div class="qstem" style="left:284px; top:180px; width:772px;">
       <h2>שאלה 6:</h2>
-      <p>עזרו לגל ושירה להחליט: מהו מצב הצבירה של אבקת הרגולית, וכיצד נמדוד את נפחה. לפניכם מספר היגדים המתארים את הרגולית,</p>
+      <p>עזרו לגל ושירה להחליט: מהו מצב הצבירה של אבקת הרגולית, וכיצד נמדוד את נפחה. לפניכם מספר היגדים המתארים את הרגולית.</p>
       <p class="q-bold">סמנו את כל ההיגדים הנכונים:</p>
     </div>
 
@@ -568,7 +602,7 @@
     <div class="bubble" data-reveal data-reveal-order="1" style="left:0; top:0; width:1920px; height:1080px;">
       <img class="bubble__img" src="assets/images/label-35.png" alt="">
       <div class="callout" style="left:296px; top:660px; width:516px; height:148px;">
-        <p>בקבוק קוני – ארלנמאייר -<br>כלי בעל צורה משתנה - רחב<br>בבסיס ונעשה צר לכיוון הקצה.</p>
+        <p>בקבוק קוני – ארלנמאייר:<br>כלי בעל צורה משתנה, רחב בבסיס ונעשה צר לכיוון הקצה.</p>
       </div>
     </div>
   </section>
@@ -587,12 +621,12 @@
     </div>
     <iframe class="applet-frame" src="applets/calibration.html?v=3"
             title="יישומון: כיול הארלנמאייר" allowtransparency="true" scrolling="no"
-            style="left:585px; top:205px; width:750px; height:850px;"></iframe>
+            style="left:200px; top:240px; width:1520px; height:840px;"></iframe>
   </section>
 
   <!-- ===== SCREEN 37 — question Q7א (drag to order the calibration steps) ===== -->
   <section class="screen" data-screen="23">
-    <div class="smeta" data-type="question" data-qid="q7a" data-points="6.25" data-fb-correct="אלו שלבי תהליך הכיול של הבקבוק: מודדים נפח ידוע במשורה, מעבירים אותו לבקבוק, מסמנים שְׁנָת בגובה המים, וממשיכים כך הלאה." data-fb-incorrect="אלו שלבי תהליך הכיול של הבקבוק: מודדים נפח ידוע במשורה, מעבירים אותו לבקבוק, מסמנים שְׁנָת בגובה המים, וממשיכים כך הלאה." aria-hidden="true" hidden></div>
+    <div class="smeta" data-type="question" data-qid="q7a" data-points="6.25" data-fb-correct="אלו שלבי תהליך הכיול של הבקבוק: מודדים נפח ידוע במשורה, מעבירים אותו לבקבוק, מסמנים שְׁנָת בגובה המים, וממשיכים הלאה באותו אופן." data-fb-incorrect="אלו שלבי תהליך הכיול של הבקבוק: מודדים נפח ידוע במשורה, מעבירים אותו לבקבוק, מסמנים שְׁנָת בגובה המים, וממשיכים הלאה באותו אופן." aria-hidden="true" hidden></div>
     <img class="screen-bg" src="assets/images/bg-37b.jpg"
          alt="שאלה 7א: גררו את שלבי הכיול לסדר הנכון">
 
@@ -619,8 +653,8 @@
     <div class="dstep" style="left:1650px; top:786px; width:110px; text-align:center;">שלב 4</div>
 
     <!-- draggable action cards (bank, shuffled) -->
-    <div class="dcard" data-card="3" style="left:410px; top:408px;">מסמנים על הבקבוק קו בגובה המים. קו זה נקרא שְׁנָת ומייצג את נפח המים שהוספנו – למשל 10 מ"ל.</div>
-    <div class="dcard" data-card="1" style="left:410px; top:522px;">מודדים במשורה של שירה נפח ידוע של מים - למשל 10 מ"ל.</div>
+    <div class="dcard" data-card="3" style="left:410px; top:408px;">מסמנים על הבקבוק קו בגובה, למשל 10 מ"ל.</div>
+    <div class="dcard" data-card="1" style="left:410px; top:522px;">מודדים במשורה של שירה נפח ידוע של מים, למשל 10 מ"ל.</div>
     <div class="dcard" data-card="2" style="left:410px; top:636px;">מוסיפים את נפח המים שנמדד במשורה לתוך הבקבוק.</div>
     <div class="dcard" data-card="4" style="left:410px; top:750px;">לאחר סימון השְׁנָת הראשונה אפשר להמשיך ולסמן את יתר השְׁנָתוֹת באותו האופן.</div>
 
@@ -637,7 +671,7 @@
 
   <!-- ===== SCREEN 39 — question Q7ב (fill-in dropdowns) ===== -->
   <section class="screen" data-screen="24">
-    <div class="smeta" data-type="question" data-qid="q7b" data-points="6.25" data-fb-correct="זהו עקרון הכיול. צורת הכלי משפיעה על מיקום השְׁנָתוֹת בכלי והמרחקים ביניהן." data-fb-incorrect="זהו עקרון הכיול. צורת הכלי משפיעה על מיקום השְׁנָתוֹת בכלי והמרחקים ביניהן." aria-hidden="true" hidden></div>
+    <div class="smeta" data-type="question" data-qid="q7b" data-points="6.25" data-fb-correct="זהו עקרון הכיול. צורת הכלי משפיעה על מיקום השְׁנָתוֹת בכלי ועל המרחקים ביניהן." data-fb-incorrect="זהו עקרון הכיול. צורת הכלי משפיעה על מיקום השְׁנָתוֹת בכלי ועל המרחקים ביניהן." aria-hidden="true" hidden></div>
     <img class="screen-bg" src="assets/images/bg-39b.jpg"
          alt="שאלה 7ב: השלמת משפטים על כיול, לצד שירה">
 
@@ -656,8 +690,8 @@
         </select>
         בכלים שונים. הכל לפי צורת הכלי.</p>
       <p>הקו שמסמן 10 מ"ל במשורה הצרה יהיה
-        <select class="qselect" data-answer="גבוה מ-" aria-label="השלמה 2">
-          <option value="">בחרו…</option><option value="גבוה מ-">גבוה מ-</option><option value="נמוך מ-">נמוך מ-</option><option value="זהה ל-">זהה ל-</option>
+        <select class="qselect" data-answer="גבוה מה" aria-label="השלמה 2">
+          <option value="">בחרו…</option><option value="גבוה מה">גבוה מה</option><option value="נמוך מה">נמוך מה</option><option value="זהה ל">זהה ל</option>
         </select>
         קו שמסמן את אותם 10 מ"ל בבקבוק הרחב.</p>
       <p>גודל הרווחים בין השְׁנָתוֹת משתנה אף הוא בהתאם לצורת הכלי – בכלי ההולך ונעשה צר הרווחים בין השְׁנָתוֹת
@@ -721,7 +755,7 @@
 
   <!-- ===== SCREEN 43 — question Q8 ===== -->
   <section class="screen" data-screen="27">
-    <div class="smeta" data-type="question" data-qid="q8" data-answer="2" data-points="12.5" data-fb-correct="שתי דגימות יכולות לתפוס אותו מקום (נפח זהה) אך להכיל כמות חומר שונה (מסה שונה)." data-fb-incorrect="שתי דגימות יכולות לתפוס אותו מקום (נפח זהה) אך להכיל כמות חומר שונה (מסה שונה)." aria-hidden="true" hidden></div>
+    <div class="smeta" data-type="question" data-qid="q8" data-answer="2" data-points="12.5" data-fb-correct="שתי דגימות יכולות לתפוס אותו מקום (נפח זהה), אך להכיל כמות חומר שונה (מסה שונה). למשל, אם אחת עשויה מחומר צפוף יותר, או אם אחת מלאה בחורים ונקבוביות. כדי לקבוע את המסה יש להשתמש במכשיר מדידה אחר: מאזניים." data-fb-incorrect="שתי דגימות יכולות לתפוס אותו מקום (נפח זהה), אך להכיל כמות חומר שונה (מסה שונה). למשל, אם אחת עשויה מחומר צפוף יותר, או אם אחת מלאה בחורים ונקבוביות. כדי לקבוע את המסה יש להשתמש במכשיר מדידה אחר: מאזניים." aria-hidden="true" hidden></div>
     <img class="screen-bg" src="assets/images/bg-43.jpg?v=3" alt="שאלה 8: האם נפח זהה מעיד על מסה זהה">
     <ol class="qprogress" data-active="8" data-total="8" aria-label="התקדמות בשאלות" style="left:1266px; top:42px;"></ol>
     <div class="qstem" style="left:284px; top:180px; width:772px;">
@@ -745,7 +779,7 @@
   <section class="screen" data-screen="28">
     <div class="smeta" data-type="video" data-gate="video" data-final aria-hidden="true" hidden></div>
     <div class="videoscreen">
-      <video class="video-el" src="assets/video/Chem1_Video5.mp4?v=2" playsinline preload="auto"></video>
+      <video class="video-el" src="assets/video/Chem1_Videos_5.mp4?v=2" playsinline preload="auto"></video>
       <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
       <div class="video-cap" data-vcap aria-live="polite"></div>
       <div class="vctrls" dir="ltr">
@@ -758,7 +792,7 @@
         <input class="vc-vol" type="range" min="0" max="100" value="100" step="1" data-vol aria-label="עוצמת שמע">
         <button class="vc-btn" type="button" data-full aria-label="מסך מלא">⛶</button>
       </div>
-      <button class="end-submit" type="button" data-submit hidden aria-label="סיימתי — שליחת הציון וסיום">סיימתי</button>
+      <button class="end-submit" type="button" data-submit hidden aria-label="סיימתי — שליחת הציון וסיום"><img src="assets/images/end-button.png" alt="סיימתי"></button>
       <div class="endcard" data-endcard hidden role="dialog" aria-label="סיום הלומדה">
         <h2>כל הכבוד! סיימתם את הלומדה</h2>
         <p>הציון שלכם: <span id="final-score">0</span> מתוך 100</p>
@@ -766,13 +800,14 @@
       </div>
     </div>
     <!-- captions as live text (translation-safe); times in seconds -->
-    <div class="vcap-src" data-end="22.3" hidden>
-      <span data-t="0.3">מדדנו את נפח הדגימות וכעת נוכל להתאים להן את גודל המארזים,</span>
-      <span data-t="5.32">אך זהו רק חלק מהסיפור.</span>
-      <span data-t="7.45">אי אפשר לדעת מהי המסה רק לפי המקום שהחומר תופס.</span>
-      <span data-t="12.32">נכון. ולמעבורת יש מגבלת מטען קריטית להמראה בטוחה מהירח.</span>
-      <span data-t="17.74">הצטרפו אלינו ללומדה הבאה -</span>
-      <span data-t="19.75">נמדוד את המסה ונשלים את תיעוד הנתונים!</span>
+    <div class="vcap-src" data-end="18.8" hidden>
+      <span data-t="0.0">מדדנו את נפח הדגימות וכעת נוכל להתאים להן</span>
+      <span data-t="2.48">את גודל המארזים. אך זהו רק חלק מהסיפור.</span>
+      <span data-t="5.12">אי אפשר לדעת מהי המסה רק לפי המקום שהחומר תופס.</span>
+      <span data-t="8.85">נכון ולמעבורת יש מגבלת מטען</span>
+      <span data-t="11.64">קריטית להמראה בטוחה מהירח.</span>
+      <span data-t="13.84">אתם מוזמנים להצטרף אלינו ללומדה הבאה.</span>
+      <span data-t="16.2">נמדוד את המסה ונשלים את תיעוד הנתונים.</span>
     </div>
   </section>
 

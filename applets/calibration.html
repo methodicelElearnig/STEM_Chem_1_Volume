@@ -36,59 +36,60 @@
   }
 
   .app {
-    max-width: 900px;
+    max-width: 1460px;
     width: 100%;
     background: var(--card-bg);
     border-radius: 24px;
-    padding: 26px;
+    padding: 40px;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.8);
     border: 1px solid #475569;
   }
 
   .header {
     text-align: center;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
   }
-  
-  .header h2 { margin: 0; color: var(--primary); font-size: 28px; font-weight: 700; }
+
+  .header h2 { margin: 0; color: var(--primary); font-size: 40px; font-weight: 700; }
 
   .wrap {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: stretch;
+    flex-direction: row;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
   }
 
   .stage {
     border-radius: 20px;
-    padding: 16px;
+    padding: 20px;
     flex: 0 0 auto;
     background: #FFFFFF;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     border: 3px solid #E2E8F0;
-    margin: 0 auto;
     position: relative;
   }
-  
+
   .panel {
-    flex: 1;
-    min-width: 280px;
+    flex: 0 0 auto;
+    width: 540px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 22px;
     background: #FFFFFF;
-    padding: 22px;
+    padding: 30px;
     border-radius: 20px;
     border: 2px solid #CBD5E1;
     box-shadow: 0 6px 12px rgba(0,0,0,0.05);
   }
-  
+
   .steps button {
     font-family: inherit;
-    font-size: 18px;
+    font-size: 27px;
     font-weight: 700;
     text-align: center;
-    padding: 16px;
+    white-space: nowrap;
+    padding: 20px;
     width: 100%;
     border: 2px solid var(--primary);
     background: #FFFFFF;
@@ -131,29 +132,29 @@
   }
   
   .result {
-    font-size: 36px;
+    font-size: 42px;
     font-weight: 800;
     color: var(--green-d);
     text-align: center;
-    padding: 16px;
+    padding: 18px;
     background: #F0FDF4;
     border-radius: 16px;
     border: 2px solid #BBF7D0;
   }
-  
+
   .result small {
     display: block;
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 600;
     color: #166534;
-    margin-top: 4px;
+    margin-top: 6px;
   }
-  
+
   .reset {
     align-self: center;
     font-family: inherit;
-    font-size: 15px;
-    padding: 12px 24px;
+    font-size: 23px;
+    padding: 15px 30px;
     border: none;
     background: var(--text-main);
     color: white;
@@ -162,11 +163,12 @@
     font-weight: 600;
     transition: all 0.2s ease;
   }
-  
-  .reset:hover { 
-    background: #000000; 
+
+  .reset:hover:not(:disabled) {
+    background: #000000;
     transform: translateY(-2px);
   }
+  .reset:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -176,7 +178,7 @@
   </div>
   <div class="wrap">
     <div class="stage">
-      <svg id="svg" width="480" height="400" viewBox="0 44 480 400">
+      <svg id="svg" width="760" height="620" viewBox="0 44 480 400">
         <defs>
           <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
@@ -208,7 +210,7 @@
     <div class="panel">
       <div class="steps" id="steps"></div>
       <div class="result" id="result"></div>
-      <button class="reset" id="reset">↺ רוקן כלים והתחל מחדש</button>
+      <button class="reset" id="reset" disabled>↺ רוקנו כלים והתחילו מחדש</button>
     </div>
   </div>
 </div>
@@ -367,15 +369,15 @@ function renderUI(){
   var b = document.createElement('button');
   
   if (state === 'ready_fill') {
-    b.textContent = 'הוסף 10 מ"ל לשני הכלים';
+    b.textContent = 'הוסיפו 10 מ"ל לשני הכלים';
     b.onclick = fillWater;
-  } 
+  }
   else if (state === 'animating') {
     b.textContent = 'מוזג מים...';
     b.disabled = true;
   }
   else if (state === 'ready_mark') {
-    b.textContent = 'סמן שנת בשני הכלים (' + curVol + ' מ"ל)';
+    b.textContent = 'סמנו שנת בשני הכלים (' + curVol + ' מ"ל)';
     b.className = 'mark-btn';
     b.onclick = markLines;
   }
@@ -383,13 +385,15 @@ function renderUI(){
     b.textContent = '✓ הכלים מכוילים במדויק';
     b.className = 'done';
   }
-  
+
   stepsBox.appendChild(b);
   resEl.innerHTML = markedVol + ' מ"ל<small>נפח שסומן עד כה</small>';
+  // the reset button is active only once some water has been added
+  document.getElementById('reset').disabled = (curVol === 0 && markedVol === 0);
 }
 
-document.getElementById('reset').onclick = function(){ 
-  if (state === 'animating') return;
+document.getElementById('reset').onclick = function(){
+  if (state === 'animating' || (curVol === 0 && markedVol === 0)) return;
   curVol = 0;
   markedVol = 0;
   state = 'ready_fill';

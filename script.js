@@ -147,6 +147,13 @@
       if (fb) { fb.hidden = true; fb.classList.remove('is-correct', 'is-incorrect'); }
     }
     function showFb(correctState, title, body) {
+      // On a correct answer, some screens swap to a "report/result" view:
+      // change the background, reveal the .fb-report overlay, hide the question.
+      if (correctState) {
+        // reveal the report panel (if any) in the screen's image slot; the question stays put
+        var rep = screen.querySelector('.fb-report');
+        if (rep) rep.hidden = false;
+      }
       if (!fb) return;
       fb.hidden = false;
       fb.classList.toggle('is-correct', correctState);
@@ -164,6 +171,9 @@
       }
       options.forEach(function (o) { o.classList.add('is-locked'); });
       if (check) check.hidden = true;
+      // reveal any "did you know"/extra popups that float in with the final feedback
+      var extras = screen.querySelectorAll('.fb-extra');
+      for (var i = 0; i < extras.length; i++) extras[i].hidden = false;
       updateChrome();                                  // reveal forward arrow
       if (btnFwd) btnFwd.classList.add('nav-pulse');   // blink it
     }
@@ -414,12 +424,12 @@
     var rpBtn  = screen.querySelector('[data-replay]');
 
     // narration timeline (seconds) — derived from the audio's phrase pauses; tweak here if needed
-    var REVEAL = { mare: 0.6, vesic: 5.2, anor: 9.7, regolith: 12.75 };   // when each card appears
-    var CAPS = [   // caption swaps at each phrase onset
-      { t: 0.0,   text: 'הבאנו בָּזֶלֶת מָארֶה - לבה שהתמצקה באזורים הכהים של הירח.' },
-      { t: 5.16,  text: 'בָּזֶלֶת נַקְבּוּבִית - שנוצרה כתוצאה מגזים שנלכדו בסלע.' },
-      { t: 9.66,  text: 'אָנוֹרְתוֹזִיט בהיר מהרי הירח העתיקים.' },
-      { t: 12.69, text: 'וגם רֶגוֹלִית - אָבָק יְרֵחִי.' }
+    var REVEAL = { mare: 0.5, vesic: 4.73, anor: 8.97, regolith: 11.89 };   // when each card appears (new narration timing)
+    var CAPS = [   // caption swaps at each phrase onset — re-timed to the new narration
+      { t: 0.3,   text: 'הבאנו בָּזֶלֶת מָארֶה - לבה שהתמצקה באזורים הכהים של הירח.' },
+      { t: 4.73,  text: 'בָּזֶלֶת נַקְבּוּבִית - שנוצרה כתוצאה מגזים שנלכדו בסלע.' },
+      { t: 8.97,  text: 'אָנוֹרְתוֹזִיט בהיר מהרי הירח העתיקים.' },
+      { t: 11.89, text: 'וגם רֶגוֹלִית - אָבָק יְרֵחִי.' }
     ];
     var PP_PLAY = '▶', PP_PAUSE = '❚❚';
     var explored = {}, raf = null;
@@ -498,6 +508,7 @@
     var v = screen.querySelector('video');
     var playBtn = screen.querySelector('.video-play');   // big center poster button
     var cap = screen.querySelector('[data-vcap]');
+    var logo = screen.querySelector('.video-logo');      // opening logo (first ~3s), if any
     if (!v) return;
     // caption segments live as hidden HTML (translation-safe): .vcap-src > [data-t] spans
     var src = screen.querySelector('.vcap-src');
@@ -524,6 +535,7 @@
       for (var i = 0; i < CAPS.length; i++) { if (t >= CAPS[i].t) s = CAPS[i].text; }
       if (t >= CLEAR_AFTER) s = '';
       if (cap && cap.textContent !== s) cap.textContent = s;
+      if (logo) logo.style.opacity = (t < 3) ? '1' : '0';   // opening logo for the first 3s
     }
     function syncBar() {
       if (curEl) curEl.textContent = fmt(v.currentTime);
@@ -586,7 +598,17 @@
       var bottom = opts.offsetTop + opts.offsetHeight;
       var chk = s.querySelector('.btn--check'); var f = s.querySelector('.feedback');
       if (chk) chk.style.top = (bottom + 28) + 'px';
-      if (f)   f.style.top   = (bottom + 28) + 'px';
+      if (f) {
+        // keep the feedback low enough to clear the right-side image (~y710) and
+        // always below the options; then let it span wide across the bottom.
+        f.style.top = Math.max(bottom + 28, 745) + 'px';
+        if (!f.classList.contains('feedback--left')) {
+          f.style.left = '50%';
+          f.style.transform = 'translateX(-50%)';
+          f.style.width = '1500px';
+          f.classList.remove('feedback--col');
+        }
+      }
     });
   }
   layoutQuestions();

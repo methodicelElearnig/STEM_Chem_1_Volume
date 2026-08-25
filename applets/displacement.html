@@ -11,17 +11,17 @@
   :root {
     --primary: #1D4ED8;
     --primary-hover: #1E3A8A;
-    --bg-page: #0F172A; 
-    --card-bg: #FAF3E0; 
+    --bg-page: #0F172A;
+    --card-bg: #FAF3E0;
     --text-main: #1E293B;
     --text-muted: #475569;
     --done-bg: #E0E7FF;
     --done-border: #93C5FD;
     --done-text: #1E40AF;
   }
-  
+
   * { box-sizing: border-box; }
-  
+
   html, body { background: transparent; }
   body {
     margin: 0;
@@ -35,33 +35,33 @@
   }
 
   .app {
-    max-width: 1040px;
+    max-width: 1460px;
     width: 100%;
     background: var(--card-bg);
     border-radius: 24px;
-    padding: 32px;
+    padding: 40px;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.8);
     border: 1px solid #475569;
   }
-  
+
   .header {
     text-align: center;
     margin-bottom: 32px;
   }
-  
-  .header h2 { margin: 0; color: var(--primary); font-size: 28px; font-weight: 700; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
-  .header p { margin: 10px 0 0 0; color: var(--text-muted); font-size: 16px; }
-  
+
+  .header h2 { margin: 0; color: var(--primary); font-size: 40px; font-weight: 700; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+  .header p { margin: 14px 0 0 0; color: var(--text-main); font-size: 28px; font-weight: 700; }
+
   .wrap {
     display: flex;
-    gap: 36px;
+    gap: 48px;
     flex-wrap: wrap;
     align-items: flex-start;
   }
-  
+
   .stage {
     border-radius: 20px;
-    padding: 20px;
+    padding: 24px;
     flex: 0 0 auto;
     background: #FFFFFF;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -69,22 +69,22 @@
     margin: 0 auto;
     position: relative;
   }
-  
+
   .panel {
     flex: 1;
-    min-width: 340px;
+    min-width: 420px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 22px;
   }
-  
+
   .pick {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
+    gap: 20px;
     width: 100%;
-    padding: 16px;
+    padding: 22px;
     border: 2px solid #CBD5E1;
     background: #FFFFFF;
     border-radius: 16px;
@@ -94,21 +94,21 @@
     transition: all 0.25s ease;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   }
-  
+
   .pick:hover:not(:disabled) {
     background: #F1F5F9;
     border-color: var(--primary);
     transform: translateY(-2px);
     box-shadow: 0 8px 15px rgba(29, 78, 216, 0.15);
   }
-  
+
   .pick:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     background: #E2E8F0;
     border-color: #CBD5E1;
   }
-  
+
   .pick.done {
     background: var(--done-bg);
     border-color: var(--done-border);
@@ -116,13 +116,13 @@
     transform: none;
     box-shadow: none;
   }
-  
+
   .pick .lbl {
-    font-size: 18px;
+    font-size: 26px;
     font-weight: 700;
     color: var(--text-main);
   }
-  
+
   .data-table {
     width: 100%;
     border-collapse: separate;
@@ -131,54 +131,54 @@
     border: 2px solid #CBD5E1;
     border-radius: 16px;
     overflow: hidden;
-    font-size: 15px;
+    font-size: 21px;
     box-shadow: 0 6px 12px rgba(0,0,0,0.05);
-    margin-top: 10px;
+    margin-top: 12px;
   }
-  
+
   .data-table th, .data-table td {
-    padding: 14px 16px;
+    padding: 18px 20px;
     text-align: right;
     border-bottom: 1px solid #E2E8F0;
   }
-  
+
   .data-table th {
     background: #F1F5F9;
     font-weight: 700;
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: 18px;
   }
-  
+
   .data-table tr:last-child td { border-bottom: none; }
-  
+
   .data-table .final-row {
     background: var(--done-bg);
     font-weight: 700;
     color: var(--done-text);
-    font-size: 16px;
+    font-size: 23px;
   }
-  
+
   .empty-cell {
     color: #94A3B8;
     font-style: italic;
-    font-size: 13.5px;
+    font-size: 17px;
   }
-  
+
   .ltr-math {
     direction: ltr;
     display: inline-block;
     font-family: monospace;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 22px;
     letter-spacing: 1px;
     color: var(--primary);
   }
-  
+
   .reset {
     align-self: flex-start;
     font-family: inherit;
-    font-size: 15px;
-    padding: 14px 28px;
+    font-size: 23px;
+    padding: 18px 40px;
     border: none;
     background: var(--text-main);
     color: white;
@@ -187,13 +187,20 @@
     font-weight: 600;
     transition: all 0.2s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    margin-top: 10px;
+    margin-top: 12px;
   }
-  
-  .reset:hover { 
-    background: #000000; 
+
+  .reset:hover:not(:disabled) {
+    background: #000000;
     transform: translateY(-2px);
     box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+  }
+
+  .reset:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: #94A3B8;
+    box-shadow: none;
   }
 </style>
 </head>
@@ -205,7 +212,7 @@
   </div>
   <div class="wrap">
     <div class="stage">
-      <svg id="svg" width="300" height="430" viewBox="0 0 300 430">
+      <svg id="svg" width="400" height="572" viewBox="0 0 300 430">
         <defs>
           <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
@@ -230,30 +237,30 @@
         <g id="scene"></g>
       </svg>
     </div>
-    
+
     <div class="panel">
       <div id="picks"></div>
       <div id="table-container"></div>
-      <button class="reset" id="reset">↺ רוקן משורה והתחל מחדש</button>
+      <button class="reset" id="reset" disabled>↺ רוקנו משורה והתחילו מחדש</button>
     </div>
   </div>
 </div>
 
 <script>
 var SVG='http://www.w3.org/2000/svg';
-var scene = document.getElementById('scene'), 
+var scene = document.getElementById('scene'),
     picksEl = document.getElementById('picks'),
     tableContainer = document.getElementById('table-container');
 
 var BASE = 80, CAP = 140;
-var ROCK_VOL = 30; 
+var ROCK_VOL = 30;
 
 var isInserted = false;
 var curWater = BASE;
 var busy = false;
 // משורה צרה: 75 פיקסלים
 var cx = 150, w = 75, topY = 30, botY = 400, h = botY - topY;
-var rockY = 80; 
+var rockY = 80;
 
 function yFor(v){ return botY - (v/CAP)*h; }
 function E(t,a,x){ var e=document.createElementNS(SVG,t); for(var k in a) e.setAttribute(k,a[k]); if(x!=null) e.textContent=x; return e; }
@@ -261,7 +268,7 @@ function clear(el){ while(el.firstChild) el.removeChild(el.firstChild); }
 
 function getRockSVG() {
   var rg = E('g', {});
-  
+
   rg.appendChild(E('polygon', {
     points: '-42,20 -48,0 -28,-18 -8,-38 12,-22 35,-12 45,15 28,28 -12,25',
     fill: '#9CA3AF',
@@ -297,7 +304,7 @@ function getRockSVG() {
   lines.forEach(function(d) {
     rg.appendChild(E('path', {d: d, stroke: '#4B5563', 'stroke-width': 1, fill: 'none'}));
   });
-  
+
   var speckles = [
     {x:-30,y:10,r:1}, {x:-20,y:-5,r:1.5}, {x:-10,y:-20,r:1}, {x:5,y:5,r:1.5},
     {x:20,y:-10,r:1}, {x:30,y:15,r:1.5}, {x:0,y:20,r:1}, {x:15,y:22,r:1}
@@ -305,21 +312,21 @@ function getRockSVG() {
   speckles.forEach(function(sp) {
     rg.appendChild(E('circle', {cx: sp.x, cy: sp.y, r: sp.r, fill: '#374151', opacity: 0.5}));
   });
-  
+
   return rg;
 }
 
 function draw(){
   clear(scene);
-  
+
   scene.appendChild(E('rect', {x:cx-w/2, y:topY, width:w, height:h, rx:12, fill:'#F8FAFC', stroke:'#CBD5E1', 'stroke-width':2}));
-  
+
   for(var v=0; v<=CAP; v+=10){
     var y = yFor(v), maj = (v%20===0);
     scene.appendChild(E('line', {x1:cx-w/2, y1:y, x2:cx-w/2+(maj?16:8), y2:y, stroke:maj?'#64748B':'#CBD5E1', 'stroke-width':maj?2:1}));
     if(maj) scene.appendChild(E('text', {x:cx-w/2-8, y:y+4, 'font-size':14, 'font-weight':700, fill:'#475569', 'text-anchor':'end', 'style':'direction:ltr'}, v));
   }
-  
+
   var wy = yFor(curWater);
   var ry = 7;
   var waterHeight = botY - wy;
@@ -327,7 +334,7 @@ function draw(){
     scene.appendChild(E('rect', {x:cx-w/2+2, y:wy, width:w-4, height:waterHeight-2, fill:'url(#waterGrad)', rx:4}));
     scene.appendChild(E('ellipse', {cx:cx, cy:wy, rx:(w-4)/2, ry:ry, fill:'url(#waterTopGrad)'}));
   }
-  
+
   if(isInserted || busy) {
     var rg = getRockSVG();
     // הקטנת הסלע ב-45% כדי שיתאים בדיוק למשורה הצרה (רוחב 75)
@@ -335,7 +342,7 @@ function draw(){
     rg.setAttribute('filter', 'url(#dropShadow)');
     scene.appendChild(rg);
   }
-  
+
   scene.appendChild(E('line', {x1:cx+w/2, y1:wy, x2:cx+w/2+30, y2:wy, stroke:'#EF4444', 'stroke-width':1.5, 'stroke-dasharray':'4 3'}));
   scene.appendChild(E('text', {x:cx+w/2+35, y:wy+4, 'font-size':13, 'font-weight':700, fill:'#EF4444', 'style':'direction:ltr'}, Math.round(curWater)));
 
@@ -345,27 +352,27 @@ function draw(){
 function insertRock(){
   if(busy || isInserted) return;
   isInserted = true;
-  curWater = BASE; 
-  rockY = 60; 
-  
-  renderUI(); 
-  
+  curWater = BASE;
+  rockY = 60;
+
+  renderUI();
+
   var targetWater = BASE + ROCK_VOL;
-  var targetRockY = botY - 22; 
-  
-  busy = true; 
+  var targetRockY = botY - 22;
+
+  busy = true;
   var startWater = curWater, startRockY = rockY, t0 = null, dur = 1400;
-  
-  function fr(ts){ 
-    if(!t0) t0 = ts; 
-    var p = Math.min(1, (ts-t0)/dur); 
-    var ease = 1 - Math.pow(1 - p, 3); 
-    
-    curWater = startWater + (targetWater - startWater) * ease; 
+
+  function fr(ts){
+    if(!t0) t0 = ts;
+    var p = Math.min(1, (ts-t0)/dur);
+    var ease = 1 - Math.pow(1 - p, 3);
+
+    curWater = startWater + (targetWater - startWater) * ease;
     rockY = startRockY + (targetRockY - startRockY) * ease;
-    
+
     draw();
-    if(p < 1) requestAnimationFrame(fr); else { busy = false; renderUI(); } 
+    if(p < 1) requestAnimationFrame(fr); else { busy = false; renderUI(); }
   }
   requestAnimationFrame(fr);
 }
@@ -373,22 +380,22 @@ function insertRock(){
 function renderUI(){
   draw();
   picksEl.innerHTML = '';
-  
+
   var b = document.createElement('button');
   b.className = 'pick' + (isInserted ? ' done' : '');
   if(isInserted) b.disabled = true;
-  
-  var iconSvg = '<svg width="70" height="70" viewBox="-50 -50 100 100">' + getRockSVG().innerHTML + '</svg>';
-  
+
+  var iconSvg = '<svg width="92" height="92" viewBox="-50 -50 100 100">' + getRockSVG().innerHTML + '</svg>';
+
   b.innerHTML = iconSvg + '<span class="lbl">' + (isInserted ? 'הדגימה בפנים ✓' : 'הכניסו את דגימת הסלע') + '</span>';
   b.onclick = insertRock;
   picksEl.appendChild(b);
-  
+
   var t = '<table class="data-table">';
   t += '<thead><tr><th>שלב בניסוי</th><th>חישוב</th><th>נפח במ"ל</th></tr></thead><tbody>';
-  
+
   t += '<tr><td>נפח מים התחלתי</td><td class="empty-cell">קריאה ישירה</td><td>' + BASE + '</td></tr>';
-  
+
   if(isInserted) {
     var v2 = BASE + ROCK_VOL;
     t += '<tr><td>מפלס מים לאחר הוספת הסלע</td><td class="empty-cell">קריאה ישירה</td><td>' + v2 + '</td></tr>';
@@ -397,13 +404,16 @@ function renderUI(){
     t += '<tr><td>מפלס מים לאחר הוספת הסלע</td><td class="empty-cell">-</td><td class="empty-cell">ממתין לדגימה</td></tr>';
     t += '<tr class="final-row"><td>נפח דגימת הסלע</td><td class="empty-cell">-</td><td class="empty-cell">-</td></tr>';
   }
-  
+
   t += '</tbody></table>';
   tableContainer.innerHTML = t;
+
+  // reset button is active only after the rock has been inserted
+  document.getElementById('reset').disabled = !isInserted;
 }
 
 document.getElementById('reset').onclick = function() {
-  if(busy) return;
+  if(busy || !isInserted) return;
   isInserted = false;
   curWater = BASE;
   renderUI();
