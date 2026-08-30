@@ -22,10 +22,11 @@
     <button id="next">הבא ▶</button>
     <span id="note"></span>
   </div>
-  <iframe id="frame" src="index.html"></iframe>
+  <iframe id="frame" src=""></iframe>
 <script>
   'use strict';
   var frame = document.getElementById('frame');
+  frame.src = 'index.html?v=' + Date.now(); // always bust cache so edits show up immediately
   var totalEl = document.getElementById('total');
   var scr = document.getElementById('scr');
   var note = document.getElementById('note');

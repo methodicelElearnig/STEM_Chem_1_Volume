@@ -160,11 +160,11 @@ body{
 /* positioned figure/diagram (e.g. a concept illustration that floats in) */
 .diagram{ position:absolute; }
 /* live equation + diagram labels (kept as text so they're translatable) */
-.eq{ position:absolute; text-align:center; font-size:48px; font-weight:400; color:#4e7a34; }
+.eq{ position:absolute; text-align:center; font-size:60px; font-weight:400; color:#4e7a34; }
 .eq .k{ color:#111; font-weight:400; }   /* + and = signs in black */
 .eq .b{ font-weight:800; }               /* נפח הגוף — green + bold */
-.dlabel{ position:absolute; text-align:center; font-size:26px; line-height:1.35; color:#1f2a30; }
-.dlabel b{ display:block; font-size:36px; margin-bottom:6px; }
+.dlabel{ position:absolute; text-align:center; font-size:30px; line-height:1.35; color:#1f2a30; }
+.dlabel b{ display:block; font-size:42px; margin-bottom:6px; }
 
 /* ---------------------------------------------------------------
    APPLET IFRAME (SME standalone applet embedded at design coords)
@@ -172,7 +172,10 @@ body{
 .applet-frame{
   position:absolute; border:none; border-radius:24px;
   background:transparent; overflow:hidden;
+  transition:transform .55s ease;
 }
+/* once the experiment is done, the applet settles down + smaller so Shira's summary fits above it */
+.applet-frame.applet-settled{ transform:translateY(45px) scale(0.88); transform-origin:bottom center; }
 
 /* ---------------------------------------------------------------
    QUESTION + OPTIONS (single choice)
@@ -212,9 +215,9 @@ body{
    QUESTION STEM (positioned at design coords, RTL right-aligned)
    --------------------------------------------------------------- */
 .qstem{ position:absolute; text-align:right; }
-.qstem h2{ margin:0 0 14px; font-size:34px; font-weight:800; color:#4e7a34; }
+.qstem h2{ margin:0 0 14px; font-size:38px; font-weight:800; color:#4e7a34; }
 /* all stem lines share one tight line spacing — bold lines are NOT extra-spaced */
-.qstem p{ margin:0; font-size:30px; line-height:1.42; color:#1f2a30; }
+.qstem p{ margin:0; font-size:34px; line-height:1.4; color:#1f2a30; }
 .qstem p.q-bold{ font-weight:800; }
 
 /* ---------------------------------------------------------------
@@ -226,14 +229,14 @@ body{
 }
 .options--dots .option{
   display:flex; align-items:flex-start; gap:14px; justify-content:flex-start;
-  background:none; border:none; padding:2px; font-size:28px; line-height:1.3; cursor:pointer;
+  background:none; border:none; padding:2px; font-size:31px; line-height:1.3; cursor:pointer;
 }
-.options--dots .dot{ margin-top:4px; }
+.options--dots .dot{ margin-top:8px; }   /* center the dot on the first text line */
 /* short-answer variant (e.g. "40 מ\"ל") stays single-line + centered dots */
 .options--dots.options--short .option{ align-items:center; }
 .options--dots.options--short .dot{ margin-top:0; }
 /* compact variant for long options squeezed beside an image */
-.options--dots.options--compact .option{ font-size:24px; }
+.options--dots.options--compact .option{ font-size:27px; }
 .options--dots .option.is-correct,
 .options--dots .option.is-incorrect{ background:none; }
 .options--dots .dot{
@@ -263,17 +266,17 @@ body{
 .options--checks .dot{ border-radius:6px; }
 
 /* fill-in-the-blank sentences with inline dropdowns */
-.qfill{ position:absolute; font-size:30px; line-height:2.1; font-weight:600; color:#1a1a1a; text-align:right; }
-.qfill p{ margin:0 0 22px; }
-.qselect{ font-family:inherit; font-size:25px; font-weight:700; color:#185fa5; background:#eaf3fb;
+.qfill{ position:absolute; font-size:32px; line-height:1.55; font-weight:600; color:#1a1a1a; text-align:right; }
+.qfill p{ margin:0 0 18px; }
+.qselect{ font-family:inherit; font-size:27px; font-weight:700; color:#185fa5; background:#eaf3fb;
   border:2px solid #2e9bd1; border-radius:10px; padding:3px 10px; margin:0 6px; vertical-align:middle; cursor:pointer; }
 .qselect:focus-visible{ outline:var(--focus); outline-offset:2px; }
 .qselect.is-correct{ border-color:var(--c-correct); background:#e8f6ee; color:#1b6b3a; }
 .qselect.is-incorrect{ border-color:var(--c-incorrect); background:#fbeceb; color:#a3271f; }
 
 /* drag-to-order: draggable cards + step slots */
-.dcard{ position:absolute; box-sizing:border-box; width:586px; min-height:98px; background:#fff;
-  border:2px solid #cbd5e1; border-radius:16px; padding:10px 18px; font-size:26px; font-weight:600;
+.dcard{ position:absolute; box-sizing:border-box; width:586px; min-height:106px; background:#fff;
+  border:2px solid #cbd5e1; border-radius:16px; padding:12px 18px; font-size:34px; font-weight:600;
   color:#1a1a1a; text-align:center; line-height:1.3; cursor:grab; touch-action:none; user-select:none;
   box-shadow:0 4px 10px rgba(0,0,0,.10); display:flex; align-items:center; justify-content:center; }
 .dcard.dragging{ cursor:grabbing; box-shadow:0 14px 28px rgba(0,0,0,.28); z-index:60; }
@@ -282,12 +285,23 @@ body{
 .dslot{ position:absolute; box-sizing:border-box; width:586px; height:98px; border:2px dashed #93c5fd;
   border-radius:16px; background:rgba(255,255,255,.5); }
 .dslot.over{ border-color:#2e9bd1; background:#eaf3fb; }
-.dstep{ position:absolute; font-size:22px; font-weight:800; color:#1a1a1a; }
-.dhead{ position:absolute; font-size:23px; font-weight:800; color:#0f2740; }
+.dstep{ position:absolute; font-size:31px; font-weight:800; color:#1a1a1a; }
+.dhead{ position:absolute; font-size:32px; font-weight:800; color:#0f2740; }
 /* screen-37 feedback as a square panel on the (empty) left side, not a bottom popup */
 .feedback--col{ text-align:right; transform:none !important; animation-name:fb-in-left; }
-/* report/result reveal mode: hide the question, show the report overlay */
-.screen.fb-showing .qstem, .screen.fb-showing .options, .screen.fb-showing .btn--check{ display:none !important; }
+/* NOTE: .fb-showing only drives the image-position shifts below (screens 17/19).
+   Question text + options stay visible at all times -- do not hide them here;
+   .btn--check visibility is controlled purely by JS via the `hidden` attribute. */
+/* screen 17 (Q5): the rock photo settles 30px lower once feedback is showing */
+.q5-rock-img{ transition:transform .4s ease; }
+.screen.fb-showing .q5-rock-img{ transform:translateY(30px); }
+/* screen 19 (Q6): the rock/powder photo rises to the top of the frame once feedback is
+   showing, making room for the compact feedback panel underneath it */
+.q6-rock-panel{ transition:transform .4s ease; }
+.screen.fb-showing .q6-rock-panel{ transform:translateY(-170px); }
+/* screen 28 (Q8): same rising-photo convention as screen 20 (Q6) */
+.q8-rock-panel{ transition:transform .4s ease; }
+.screen.fb-showing .q8-rock-panel{ transform:translateY(-170px); }
 .fb-report{ animation:fb-in-left .4s ease both; }
 .report-panel{ position:absolute; }
 .report-panel__bg{ position:absolute; left:0; top:0; width:100%; height:100%; }
@@ -308,22 +322,34 @@ body{
 .dfixed{ position:absolute; box-sizing:border-box; font-size:23px; font-weight:600; color:#1a1a1a;
   text-align:center; line-height:1.3; padding:6px 14px; display:flex; align-items:center; justify-content:center; }
 /* method popup button (top-left) + modal */
-.methodbtn{ position:absolute; left:44px; top:40px; width:118px; height:118px; border-radius:50%;
-  background:#0f2740; color:#fff; border:3px solid #fff; font-family:inherit; font-size:20px; font-weight:800;
-  line-height:1.18; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.3); }
+.methodbtn{ position:absolute; left:40px; top:30px; width:max-content; max-width:380px; min-height:104px; border-radius:18px;
+  background:#0f2740; color:#fff; border:3px solid #fff; font-family:inherit; font-size:27px; font-weight:800;
+  line-height:1.25; text-align:center; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.3); padding:12px 26px; }
 .methodbtn:hover{ background:#1d4a72; }
+/* icon variant: icon sits on the right of the label (RTL: first in source = rightmost) */
+.methodbtn--icon{ display:flex; align-items:center; gap:14px; text-align:right; }
+.methodbtn__icon{ width:56px; height:56px; flex:0 0 auto; border-radius:50%; }
+/* pulsing "tap" cue on the method button, until it is pressed */
+.methodbtn::after{ content:''; position:absolute; z-index:7; pointer-events:none;
+  left:-24px; bottom:-24px; width:64px; height:64px; border-radius:50%;
+  background:rgba(15,39,64,.92) url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6C13 6.67 12.33 6 11.5 6S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.92-1.38z'/></svg>") center/36px no-repeat;
+  box-shadow:0 4px 14px rgba(0,0,0,.4); animation:tap-pulse2 1.3s ease-in-out infinite; }
+.methodbtn.method-used::after{ display:none; }
+@keyframes tap-pulse2{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.18); } }
 .modal{ position:absolute; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:200; }
 .modal[hidden]{ display:none; }
-.modal__box{ position:relative; width:1040px; max-width:94%; }
-.modal__box iframe{ width:100%; height:860px; border:0; display:block; background:transparent; }
+/* wide enough that the calibration applet's own background (max-width:1460px content)
+   never runs narrower than what it needs, which was clipping/spilling its elements */
+.modal__box{ position:relative; width:1460px; max-width:96%; }
+.modal__box iframe{ width:100%; height:1000px; border:0; display:block; background:transparent; }
 .modal__close{ position:absolute; left:-18px; top:-18px; width:54px; height:54px; border-radius:50%;
   background:#0f2740; color:#fff; border:3px solid #fff; font-size:26px; font-weight:800; cursor:pointer; }
 .modal__close:hover{ background:#1d4a72; }
 /* stage-1 wrong-answer prompt for drag questions */
-.dprompt{ position:absolute; left:230px; top:470px; width:520px; box-sizing:border-box;
+.dprompt{ position:absolute; left:180px; top:470px; width:520px; box-sizing:border-box;
   background:#fff; border:2px solid var(--c-incorrect); border-radius:16px; padding:22px 28px;
-  text-align:center; font-size:26px; font-weight:600; color:#1a1a1a; box-shadow:0 12px 28px rgba(0,0,0,.22); }
-.dprompt__title{ margin:0 0 12px; font-size:32px; font-weight:800; color:var(--c-incorrect); }
+  text-align:center; font-size:32px; font-weight:600; color:#1a1a1a; box-shadow:0 12px 28px rgba(0,0,0,.22); }
+.dprompt__title{ margin:0 0 12px; font-size:38px; font-weight:800; color:var(--c-incorrect); }
 .dprompt p{ margin:0; }
 .dreveal{ color:#185fa5; font-weight:800; text-decoration:underline; cursor:pointer; }
 
@@ -340,13 +366,22 @@ body{
 .card__face{ position:absolute; inset:0; border-radius:24px; overflow:hidden;
   -webkit-backface-visibility:hidden; backface-visibility:hidden; }
 .card__face--back{ transform:rotateY(180deg); text-align:center;
-  display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:112px 26px 40px; }
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:106px 22px 28px; }
 .card__reverse{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
-.card__title{ position:relative; margin:0 0 16px; font-size:32px; font-weight:800; color:#395536; }
-.card__desc{ position:relative; margin:0; font-size:27px; line-height:1.42; color:#1f2a30; }
+.card__title{ position:relative; margin:0 0 14px; font-size:37px; font-weight:800; color:#395536; }
+.card__desc{ position:relative; margin:0; font-size:31px; line-height:1.34; color:#1f2a30; }
 .card__bg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
-.card__name{ position:absolute; left:0; right:0; top:334px; height:66px; display:flex; align-items:center;
-  justify-content:center; color:#fff; font-size:26px; font-weight:700; text-align:center; padding:0 12px; }
+.card__name{ position:absolute; left:0; right:0; top:330px; height:70px; display:flex; align-items:center;
+  justify-content:center; color:#fff; font-size:37px; font-weight:700; text-align:center; padding:0 8px; white-space:nowrap; }
+/* "tap me" cue on each card until it is flipped */
+.card::after{ content:''; position:absolute; z-index:6; pointer-events:none;
+  left:50%; bottom:16px; transform:translateX(-50%); width:80px; height:80px; border-radius:50%;
+  background:rgba(15,39,64,.9) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6C13 6.67 12.33 6 11.5 6S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.92-1.38z'/></svg>") center/46px no-repeat;
+  box-shadow:0 6px 18px rgba(0,0,0,.45); animation:tap-pulse 1.3s ease-in-out infinite; }
+.card.is-flipped::after, .card.seen::after{ display:none; }
+@keyframes tap-pulse{
+  0%,100%{ transform:translateX(-50%) scale(1); box-shadow:0 6px 18px rgba(0,0,0,.45); }
+  50%{ transform:translateX(-50%) scale(1.16); box-shadow:0 6px 26px rgba(45,110,175,.75); } }
 .infopop{ position:absolute; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:200; }
 .infopop[hidden]{ display:none; }
 .infopop__box{ position:relative; width:780px; max-width:90%; background:#fff; border-radius:24px;
@@ -422,7 +457,7 @@ body{
 .player__btn:focus-visible{ outline:3px solid #fff; outline-offset:3px; }
 .player__btn--sec{ background:#3f5a74; font-size:26px; }
 .player__btn--sec:hover{ background:#4d6b88; }
-.player__cap{ flex:1; margin:0; font-size:30px; line-height:1.35; text-align:right; }
+.player__cap{ flex:1; margin:0; font-size:35px; line-height:1.35; text-align:right; }
 
 /* check button: the design graphic as an image button (hides on feedback) */
 .check-btn{ position:absolute; padding:0; border:none; background:transparent; cursor:pointer; }
@@ -460,8 +495,8 @@ body{
   box-shadow:var(--shadow); padding:28px 40px; z-index:5;
 }
 .feedback{ text-align:center; animation:fb-in .4s ease both; }
-.feedback__title{ font-size:34px; font-weight:800; margin:0 0 8px; }
-.feedback__body{ font-size:28px; line-height:1.4; margin:0; }
+.feedback__title{ font-size:38px; font-weight:800; margin:0 0 8px; }
+.feedback__body{ font-size:32px; line-height:1.4; margin:0; }
 .feedback.is-correct .feedback__title{ color:var(--c-correct); }
 .feedback.is-incorrect .feedback__title{ color:var(--c-incorrect); }
 

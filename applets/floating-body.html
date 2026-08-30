@@ -35,11 +35,11 @@
   }
 
   .app {
-    max-width: 1040px;
+    max-width: 1340px;
     width: 100%;
     background: var(--card-bg);
     border-radius: 24px;
-    padding: 32px;
+    padding: 40px;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.8);
     border: 1px solid #475569;
   }
@@ -49,8 +49,8 @@
     margin-bottom: 32px;
   }
   
-  .header h2 { margin: 0; color: var(--primary); font-size: 28px; font-weight: 700; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
-  .header p { margin: 10px 0 0 0; color: var(--text-muted); font-size: 16px; line-height: 1.5; }
+  .header h2 { margin: 0; color: var(--primary); font-size: 38px; font-weight: 700; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+  .header p { margin: 12px 0 0 0; color: var(--text-muted); font-size: 22px; line-height: 1.5; }
   
   .wrap {
     display: flex;
@@ -117,7 +117,7 @@
   }
   
   .pick .lbl {
-    font-size: 17px;
+    font-size: 24px;
     font-weight: 600;
     color: var(--text-main);
   }
@@ -132,12 +132,12 @@
     border: 2px solid #CBD5E1;
     border-radius: 16px;
     overflow: hidden;
-    font-size: 15px;
+    font-size: 21px;
     box-shadow: 0 6px 12px rgba(0,0,0,0.05);
   }
-  
+
   .data-table th, .data-table td {
-    padding: 14px 16px;
+    padding: 15px 18px;
     text-align: right;
     border-bottom: 1px solid #E2E8F0;
   }
@@ -146,7 +146,7 @@
     background: #F1F5F9;
     font-weight: 700;
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: 19px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -157,21 +157,21 @@
     background: var(--done-bg);
     font-weight: 700;
     color: var(--done-text);
-    font-size: 16px;
+    font-size: 23px;
   }
-  
+
   .empty-cell {
     color: #94A3B8;
     font-style: italic;
-    font-size: 13.5px;
+    font-size: 18px;
   }
-  
+
   .ltr-math {
     direction: ltr;
     display: inline-block;
     font-family: monospace;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 22px;
     letter-spacing: 1px;
     color: var(--primary);
   }
@@ -179,8 +179,8 @@
   .reset {
     align-self: flex-start;
     font-family: inherit;
-    font-size: 15px;
-    padding: 14px 28px;
+    font-size: 23px;
+    padding: 16px 34px;
     border: none;
     background: var(--text-main);
     color: white;
@@ -190,12 +190,13 @@
     transition: all 0.2s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   }
-  
-  .reset:hover { 
-    background: #000000; 
+
+  .reset:hover:not(:disabled) {
+    background: #000000;
     transform: translateY(-2px);
     box-shadow: 0 6px 14px rgba(0,0,0,0.3);
   }
+  .reset:disabled { opacity: 0.5; cursor: not-allowed; }
   
   text { font-family: 'Rubik', sans-serif; dominant-baseline: central; }
 </style>
@@ -208,7 +209,7 @@
   </div>
   <div class="wrap">
     <div class="stage">
-      <svg id="svg" width="300" height="430" viewBox="0 0 300 430">
+      <svg id="svg" width="450" height="645" viewBox="0 0 300 430">
         <defs>
           <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
@@ -248,7 +249,7 @@
     <div class="panel">
       <div id="picks"></div>
       <div id="table-container"></div>
-      <button class="reset" id="reset">↺ התחל ניסוי מחדש (הגרל דגימה חדשה)</button>
+      <button class="reset" id="reset" disabled>↺ התחילו ניסוי מחדש (הגרילו דגימה חדשה)</button>
     </div>
   </div>
 </div>
@@ -546,9 +547,11 @@ function render(){
   
   t += '</tbody></table>';
   tableContainer.innerHTML = t;
+  // reset is active only after a complete round (weight + sample)
+  document.getElementById('reset').disabled = (step < 2);
 }
 
-document.getElementById('reset').onclick = initExperiment;
+document.getElementById('reset').onclick = function(){ if (step < 2 || busy) return; initExperiment(); };
 initExperiment();
 </script>
 </body>

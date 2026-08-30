@@ -29,9 +29,9 @@
     color: var(--text-main);
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     padding: 6px;
-    min-height: auto;
+    min-height: 100vh;
   }
 
   .app {
@@ -49,8 +49,8 @@
     margin-bottom: 32px;
   }
 
-  .header h2 { margin: 0; color: var(--primary); font-size: 40px; font-weight: 700; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
-  .header p { margin: 14px 0 0 0; color: var(--text-main); font-size: 28px; font-weight: 700; }
+  .header h2 { margin: 0; color: var(--primary); font-size: 46px; font-weight: 700; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+  .header p { margin: 14px 0 0 0; color: var(--text-main); font-size: 33px; font-weight: 700; }
 
   .wrap {
     display: flex;
@@ -118,7 +118,7 @@
   }
 
   .pick .lbl {
-    font-size: 26px;
+    font-size: 30px;
     font-weight: 700;
     color: var(--text-main);
   }
@@ -131,7 +131,7 @@
     border: 2px solid #CBD5E1;
     border-radius: 16px;
     overflow: hidden;
-    font-size: 21px;
+    font-size: 25px;
     box-shadow: 0 6px 12px rgba(0,0,0,0.05);
     margin-top: 12px;
   }
@@ -146,7 +146,7 @@
     background: #F1F5F9;
     font-weight: 700;
     color: var(--text-muted);
-    font-size: 18px;
+    font-size: 22px;
   }
 
   .data-table tr:last-child td { border-bottom: none; }
@@ -155,13 +155,13 @@
     background: var(--done-bg);
     font-weight: 700;
     color: var(--done-text);
-    font-size: 23px;
+    font-size: 27px;
   }
 
   .empty-cell {
     color: #94A3B8;
     font-style: italic;
-    font-size: 17px;
+    font-size: 20px;
   }
 
   .ltr-math {
@@ -169,7 +169,7 @@
     display: inline-block;
     font-family: monospace;
     font-weight: 700;
-    font-size: 22px;
+    font-size: 26px;
     letter-spacing: 1px;
     color: var(--primary);
   }
@@ -177,7 +177,7 @@
   .reset {
     align-self: flex-start;
     font-family: inherit;
-    font-size: 23px;
+    font-size: 27px;
     padding: 18px 40px;
     border: none;
     background: var(--text-main);
@@ -212,7 +212,7 @@
   </div>
   <div class="wrap">
     <div class="stage">
-      <svg id="svg" width="400" height="572" viewBox="0 0 300 430">
+      <svg id="svg" width="460" height="659" viewBox="0 0 300 430">
         <defs>
           <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
@@ -372,7 +372,8 @@ function insertRock(){
     rockY = startRockY + (targetRockY - startRockY) * ease;
 
     draw();
-    if(p < 1) requestAnimationFrame(fr); else { busy = false; renderUI(); }
+    if(p < 1) requestAnimationFrame(fr);
+    else { busy = false; renderUI(); try { parent.postMessage({ type: 'APPLET_DONE' }, '*'); } catch(e){} }
   }
   requestAnimationFrame(fr);
 }

@@ -75,9 +75,9 @@
     screens[current].classList.add('active');
     screens[current].setAttribute('aria-hidden', 'false');
     if (btnFwd) btnFwd.classList.remove('nav-pulse');
-    updateChrome();
     if (screens[current].getAttribute('data-type') === 'end') showScore();
-    revealScreen(screens[current]);
+    revealScreen(screens[current]);   // run first: resets per-visit gate flags (e.g. _dialogueDone) before chrome reads them
+    updateChrome();
     if (screens[current]._onEnter) screens[current]._onEnter();
     window.currentScreen = current + 1;   // 1-based, for the QA host
     try { if (window.parent && window.parent !== window) window.parent.postMessage({ type: 'LOMDA_SCREEN_CHANGED', screen: current + 1 }, '*'); } catch (e) {}
@@ -93,10 +93,49 @@
       return (+a.getAttribute('data-reveal-order') || 0) - (+b.getAttribute('data-reveal-order') || 0);
     });
     els.forEach(function (el) { el.classList.add('float-in'); el.classList.remove('is-in'); });
-    els.forEach(function (el, i) {
-      setTimeout(function () { if (gen === revealGen) el.classList.add('is-in'); }, 150 + i * 550);
+    var maxDelay = 0;
+    els.forEach(function (el) {
+      if (el.hasAttribute('data-hold')) return;   // held elements reveal later (e.g., after the applet experiment)
+      // explicit delay (ms) overrides the generic order-based stagger, for screens that need a
+      // specific pause (e.g. a dialogue reply that should land a few seconds after the first line)
+      var explicitDelay = el.getAttribute('data-reveal-delay');
+      var order = +el.getAttribute('data-reveal-order') || 0;   // same order = revealed together
+      var delay = explicitDelay !== null ? (150 + (+explicitDelay || 0)) : (150 + order * 450);
+      if (delay > maxDelay) maxDelay = delay;
+      setTimeout(function () { if (gen === revealGen) el.classList.add('is-in'); }, delay);
+    });
+    // dialogue-gated screens: forward arrow stays hidden until the whole reveal sequence has landed
+    if (s.getAttribute('data-gate') === 'dialogue') {
+      s._dialogueDone = false;
+      setTimeout(function () {
+        if (gen !== revealGen) return;
+        s._dialogueDone = true;
+        if (screens[current] === s) updateChrome();
+      }, maxDelay);
+    }
+    if (s._appletDone) {                // returning to a completed applet screen: keep it settled + Shira shown
+      var frr = s.querySelector('.applet-frame'); if (frr) frr.classList.add('applet-settled');
+      revealHeld(s);
+    }
+  }
+  // reveal any held elements on a screen (used after the applet experiment completes)
+  function revealHeld(s) {
+    Array.prototype.forEach.call(s.querySelectorAll('[data-hold]'), function (el) {
+      el.classList.add('float-in'); el.classList.add('is-in');
     });
   }
+  // Shira's summary rises only after the student runs the displacement experiment
+  window.addEventListener('message', function (e) {
+    var d = (e && e.data) || {};
+    if (d.type !== 'APPLET_DONE') return;
+    var sc = screens[current];
+    if (!sc || sc.getAttribute('data-gate') !== 'applet' || sc._appletDone) return;
+    sc._appletDone = true;
+    var fr = sc.querySelector('.applet-frame'); if (fr) fr.classList.add('applet-settled');
+    revealHeld(sc);
+    // reveal the forward arrow only after Shira + the bubble have risen into view
+    setTimeout(function () { if (screens[current] === sc) updateChrome(); }, 800);
+  });
   function next() { goTo(current + 1); }
   function prev() { goTo(current - 1); }
 
@@ -113,10 +152,17 @@
     // on a question screen the forward arrow is hidden until it's answered correctly
     var gated = (sc.getAttribute('data-type') === 'question' && !answered[sc.getAttribute('data-qid')]) ||
                 (sc.getAttribute('data-gate') === 'explore' && !sc._exploreDone) ||
-                (sc.getAttribute('data-gate') === 'video' && !sc._videoDone);
+                (sc.getAttribute('data-gate') === 'video' && !sc._videoDone) ||
+                (sc.getAttribute('data-gate') === 'applet' && !sc._appletDone) ||
+                (sc.getAttribute('data-gate') === 'dialogue' && !sc._dialogueDone);
     if (btnFwd) {
+      // screens with their own start/continue button (e.g. the opening title
+      // screen) hide the generic forward arrow entirely, so it never shows —
+      // but it must stay enabled (not disabled) since that button proxies
+      // its click to trigger the same "next" navigation
+      var hideFwd = sc.hasAttribute('data-hide-fwd');
       btnFwd.disabled = (current === screens.length - 1) || gated;
-      btnFwd.style.visibility = gated ? 'hidden' : 'visible';
+      btnFwd.style.visibility = (gated || hideFwd) ? 'hidden' : 'visible';
     }
   }
 
@@ -145,6 +191,8 @@
     function clearResult() {
       options.forEach(function (o) { o.classList.remove('is-incorrect'); });
       if (fb) { fb.hidden = true; fb.classList.remove('is-correct', 'is-incorrect'); }
+      // feedback is gone again (retrying) -- drop the settled/shifted layout state
+      screen.classList.remove('fb-showing');
     }
     function showFb(correctState, title, body) {
       // On a correct answer, some screens swap to a "report/result" view:
@@ -160,6 +208,10 @@
       fb.classList.toggle('is-incorrect', !correctState);
       if (fbTitle) fbTitle.textContent = title;
       if (fbBody)  fbBody.textContent = body;
+      // feedback is visible (first try or final) -- drives CSS-scoped layout shifts,
+      // e.g. screen 17/19's rock image settling into its "feedback showing" spot.
+      // Question text + options are NOT hidden by this -- they stay visible throughout.
+      screen.classList.add('fb-showing');
     }
     function finishQuestion(scored, gained) {
       if (!answered[qid]) {
@@ -309,6 +361,12 @@
     var points = parseFloat(screen.getAttribute('data-points')) || 0;
     var cards = Array.prototype.slice.call(screen.querySelectorAll('.dcard'));
     var slots = Array.prototype.slice.call(screen.querySelectorAll('.dslot'));
+    // a slot accepts its data-slot card, or any card listed in data-accept (allows interchangeable steps)
+    function slotAccepts(s, card) {
+      if (!card) return false;
+      var acc = s.getAttribute('data-accept') || s.getAttribute('data-slot');
+      return acc.split(',').indexOf(card.getAttribute('data-card')) >= 0;
+    }
     var check = screen.querySelector('.btn--check');
     var fb = screen.querySelector('.feedback');
     var fbT = fb && fb.querySelector('.feedback__title');
@@ -392,7 +450,7 @@
       check.hidden = true;
       if (fb) fb.hidden = true;
       var nCorrect = 0;
-      slots.forEach(function (s) { if (s._card.getAttribute('data-card') === s.getAttribute('data-slot')) nCorrect++; });
+      slots.forEach(function (s) { if (slotAccepts(s, s._card)) nCorrect++; });
       if (nCorrect === slots.length) {
         done = true;
         slots.forEach(function (s) { s._card.classList.add('is-correct'); });
@@ -402,7 +460,7 @@
       attempts++;
       if (attempts >= MAX) {
         // stage 1: mark their own layout right/wrong, lock it, show the small "→ כאן" prompt
-        slots.forEach(function (s) { var ok = s._card.getAttribute('data-card') === s.getAttribute('data-slot'); s._card.classList.toggle('is-correct', ok); s._card.classList.toggle('is-incorrect', !ok); });
+        slots.forEach(function (s) { var ok = slotAccepts(s, s._card); s._card.classList.toggle('is-correct', ok); s._card.classList.toggle('is-incorrect', !ok); });
         cards.forEach(function (c) { c.style.pointerEvents = 'none'; });
         pendingN = nCorrect; pendingPartial = (nCorrect / slots.length) * points;
         showPrompt(nCorrect > 0 ? 'כמעט!' : 'זו טעות', 'לחצו <a href="#" class="dreveal">כאן</a> לתשובה הנכונה');
@@ -426,10 +484,10 @@
     // narration timeline (seconds) — derived from the audio's phrase pauses; tweak here if needed
     var REVEAL = { mare: 0.5, vesic: 4.73, anor: 8.97, regolith: 11.89 };   // when each card appears (new narration timing)
     var CAPS = [   // caption swaps at each phrase onset — re-timed to the new narration
-      { t: 0.3,   text: 'הבאנו בָּזֶלֶת מָארֶה - לבה שהתמצקה באזורים הכהים של הירח.' },
-      { t: 4.73,  text: 'בָּזֶלֶת נַקְבּוּבִית - שנוצרה כתוצאה מגזים שנלכדו בסלע.' },
-      { t: 8.97,  text: 'אָנוֹרְתוֹזִיט בהיר מהרי הירח העתיקים.' },
-      { t: 11.89, text: 'וגם רֶגוֹלִית - אָבָק יְרֵחִי.' }
+      { t: 0.3,   text: 'הבאנו בָּזֶלֶת מָארֶה - לבה שהתמצקה באזורים הכהים של הירח' },
+      { t: 4.73,  text: 'בָּזֶלֶת נַקְבּוּבִית - שנוצרה כתוצאה מגזים שנלכדו בסלע' },
+      { t: 8.97,  text: 'אָנוֹרְתוֹזִיט בהיר מהרי הירח העתיקים' },
+      { t: 11.89, text: 'וגם רֶגוֹלִית - אָבָק יְרֵחִי' }
     ];
     var PP_PLAY = '▶', PP_PAUSE = '❚❚';
     var explored = {}, raf = null;
@@ -454,6 +512,7 @@
     cards.forEach(function (card) {
       function flip() {
         card.classList.toggle('is-flipped');
+        card.classList.add('seen');                        // hide the "tap me" cue once used
         card.setAttribute('aria-pressed', card.classList.contains('is-flipped') ? 'true' : 'false');
         explored[card.getAttribute('data-key')] = true;   // flipped at least once
         checkGate();
@@ -480,7 +539,7 @@
     });
 
     screen._onEnter = function () {
-      cards.forEach(function (c) { c.classList.remove('in'); c.classList.remove('is-flipped'); c.setAttribute('aria-pressed', 'false'); });
+      cards.forEach(function (c) { c.classList.remove('in'); c.classList.remove('is-flipped'); c.classList.remove('seen'); c.setAttribute('aria-pressed', 'false'); });
       setCap(0);
       if (ppBtn) ppBtn.textContent = PP_PLAY;
       if (audio) {
@@ -589,30 +648,12 @@
     screen._onLeave = function () { if (raf) cancelAnimationFrame(raf); try { v.pause(); } catch (e) {} };
   }
 
-  /* place each question's check button + feedback just below its options block
-     (handles short vs sentence-length answers without hard-coded coordinates) */
-  function layoutQuestions() {
-    screens.forEach(function (s) {
-      if (s.getAttribute('data-type') !== 'question') return;
-      var opts = s.querySelector('.options'); if (!opts) return;
-      var bottom = opts.offsetTop + opts.offsetHeight;
-      var chk = s.querySelector('.btn--check'); var f = s.querySelector('.feedback');
-      if (chk) chk.style.top = (bottom + 28) + 'px';
-      if (f) {
-        // keep the feedback low enough to clear the right-side image (~y710) and
-        // always below the options; then let it span wide across the bottom.
-        f.style.top = Math.max(bottom + 28, 745) + 'px';
-        if (!f.classList.contains('feedback--left')) {
-          f.style.left = '50%';
-          f.style.transform = 'translateX(-50%)';
-          f.style.width = '1500px';
-          f.classList.remove('feedback--col');
-        }
-      }
-    });
-  }
-  layoutQuestions();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutQuestions);
+  /* NOTE: every question screen's check button + feedback position is now hand-tuned
+     via inline styles directly in index.html. A legacy layoutQuestions() auto-layout
+     helper used to run here and force-override those positions on every load/font-ready
+     event (computed from the options block's height) — removed because it was silently
+     clobbering all the hand-placed coordinates. Do not re-add generic auto-positioning
+     for .btn--check / .feedback without excluding screens with explicit inline top/left. */
 
   /* ---------- question progress bars: build the numbered circles ---------- */
   Array.prototype.forEach.call(document.querySelectorAll('.qprogress'), function (ol) {
@@ -641,7 +682,7 @@
   Array.prototype.forEach.call(document.querySelectorAll('[data-modal]'), function (btn) {
     var m = document.getElementById(btn.getAttribute('data-modal'));
     if (!m) return;
-    btn.addEventListener('click', function () { m.hidden = false; });
+    btn.addEventListener('click', function () { m.hidden = false; btn.classList.add('method-used'); });
     m.addEventListener('click', function (e) { if (e.target === m) m.hidden = true; });
     var x = m.querySelector('.modal__close');
     if (x) x.addEventListener('click', function () { m.hidden = true; });
