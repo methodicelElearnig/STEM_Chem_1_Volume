@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "unit": "לומדת נפח — STEM כימיה 1, כיתות ז'-ח'",
+    "method": "Hand-reviewed by eye against index.html + assets/images/ — this project's convention keeps all question/dialogue/instruction text as live HTML (never baked into images) specifically so it can be translated as text, so this list is expected to stay short and cover only reusable UI-chrome graphics.",
+    "regenerate": "python3 translation/tools/asset_localization_report.py (after updating the ASSETS list by hand)"
+  },
+  "assets": [
+    {
+      "file": "assets/images/check-button.png",
+      "bakedText": "צדקתי?",
+      "usedInScreens": [
+        "screen-6",
+        "screen-11",
+        "screen-12",
+        "screen-14",
+        "screen-16",
+        "screen-18",
+        "screen-20",
+        "screen-24",
+        "screen-25",
+        "screen-28"
+      ],
+      "note": "Reusable submit-button graphic (the check-btn <img>), used identically on every question screen. Needs one fresh Arabic export to replace everywhere it's referenced — not a per-screen translation."
+    }
+  ]
+}

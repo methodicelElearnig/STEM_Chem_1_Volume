@@ -81,7 +81,41 @@
     if (screens[current]._onEnter) screens[current]._onEnter();
     window.currentScreen = current + 1;   // 1-based, for the QA host
     try { if (window.parent && window.parent !== window) window.parent.postMessage({ type: 'LOMDA_SCREEN_CHANGED', screen: current + 1 }, '*'); } catch (e) {}
+    saveProgress();   // bookmark this screen so closing + reopening resumes here (no-op outside an LMS)
   }
+
+  /* ---------- SCORM resume: save/restore progress across sessions ----------
+     Saved via the LMS (cmi.core.lesson_location + cmi.suspend_data), not the
+     browser — so it follows the student to a different computer, as long as
+     they're launched from the same LMS course. Fully a no-op standalone
+     (opened directly, or inside the QA harness): window.SCORM.isReady()
+     stays false, so nothing is read or written.
+     Restoring the exact on-screen "this option is selected/locked" look for
+     an already-answered question isn't replayed here — only which questions
+     are done (so the forward-navigation gate stays correct) and the running
+     score. Revisiting an old answered question after a resume shows it
+     un-selected again; re-picking and checking is harmless (it won't
+     double-count the score) and re-locks it visually. */
+  function saveProgress() {
+    if (!window.SCORM || !window.SCORM.isReady()) return;
+    window.SCORM.saveLocation(current + 1);
+    window.SCORM.saveSuspendData({ answered: answered, earned: earned, score: score });
+  }
+  function restoreProgress() {
+    if (!window.SCORM || !window.SCORM.isReady()) return;
+    var data = window.SCORM.getSuspendData();
+    if (data) {
+      if (data.answered) {
+        for (var qid in data.answered) if (data.answered.hasOwnProperty(qid)) answered[qid] = true;
+      }
+      if (typeof data.earned === 'number') earned = data.earned;
+      if (typeof data.score === 'number') score = data.score;
+      if (window.lomdaState) window.lomdaState.score = earned;
+    }
+    var loc = parseInt(window.SCORM.getLocation(), 10);
+    if (!isNaN(loc) && loc >= 1 && loc <= screens.length && loc !== current + 1) goTo(loc - 1);
+  }
+  window.addEventListener('scorm:ready', restoreProgress);
 
   /* ---------- FLOAT-IN REVEAL ---------- */
   var REVEAL_SEL = '.speech, .qstem, .options, .bubble, .applet-frame, [data-reveal]';
@@ -220,6 +254,7 @@
         if (scored) score++;
         answered[qid] = true;
         if (window.SCORM) window.SCORM.setScore(earned); if (window.lomdaState) window.lomdaState.score = earned;   // report running score to the LMS
+        saveProgress();   // persist this answer immediately, not just on the next screen change
       }
       options.forEach(function (o) { o.classList.add('is-locked'); });
       if (check) check.hidden = true;
@@ -427,7 +462,7 @@
     });
 
     function award(gain, scored) {
-      if (!answered[qid]) { if (gain > 0) earned += gain; if (scored) score++; answered[qid] = true; if (window.SCORM) window.SCORM.setScore(earned); if (window.lomdaState) window.lomdaState.score = earned; }
+      if (!answered[qid]) { if (gain > 0) earned += gain; if (scored) score++; answered[qid] = true; if (window.SCORM) window.SCORM.setScore(earned); if (window.lomdaState) window.lomdaState.score = earned; saveProgress(); }
       cards.forEach(function (c) { c.style.pointerEvents = 'none'; });
       if (check) check.hidden = true;
       updateChrome(); if (btnFwd) btnFwd.classList.add('nav-pulse');   // forward appears only now
