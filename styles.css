@@ -56,6 +56,14 @@ body{
   transform-origin: center center;
   background:var(--c-bg);
   overflow:hidden;
+  /* the whole 1920x1080 stage is almost always scaled by a fractional (non-integer)
+     ratio to fit the viewport -- on some GPUs/browsers this makes the browser
+     keep re-rasterizing the detailed background art every frame instead of
+     caching it once, which reads as a faint constant "shimmer/pulse" across
+     the whole screen even with zero animation nearby. Pinning this as its own
+     stable GPU layer stops that re-rasterization. */
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 /* ---- screens: only .active is shown ---- */
@@ -165,6 +173,28 @@ body{
 .eq .b{ font-weight:800; }               /* נפח הגוף — green + bold */
 .dlabel{ position:absolute; text-align:center; font-size:30px; line-height:1.35; color:#1f2a30; }
 .dlabel b{ display:block; font-size:42px; margin-bottom:6px; }
+
+/* glossary hint: a link inline with a dlabel's body text that toggles a short-definition tooltip */
+.gloss-link{
+  font:inherit; background:none; border:none; padding:0; margin:0;
+  cursor:pointer; color:#185fa5; text-decoration:underline; text-underline-offset:4px;
+  position:relative;
+}
+.gloss-link:hover,
+.gloss-link[aria-expanded="true"]{ color:#0f3f70; }
+.gloss-link:focus-visible{ outline:var(--focus); outline-offset:3px; border-radius:4px; }
+.gloss-link__icon{ font-size:.8em; }
+.gloss-tip{
+  position:absolute; right:0; top:calc(100% + 16px);
+  width:320px; text-align:center; text-decoration:none;
+  background:#fff; color:#1f2a30; font-size:30px; line-height:1.4; font-weight:400;
+  padding:14px 18px; border-radius:12px; border:3px solid #1f2a30; box-shadow:var(--shadow); z-index:30;
+}
+.gloss-tip::after,
+.gloss-tip::before{ content:''; position:absolute; right:20px; border:12px solid transparent; }
+.gloss-tip::after{ bottom:100%; border-bottom-color:#1f2a30; }
+.gloss-tip::before{ bottom:calc(100% - 3px); right:23px; border-width:9px; border-bottom-color:#fff; }
+.gloss-tip[hidden]{ display:none; }
 
 /* ---------------------------------------------------------------
    APPLET IFRAME (SME standalone applet embedded at design coords)
@@ -333,7 +363,7 @@ body{
 .methodbtn::after{ content:''; position:absolute; z-index:7; pointer-events:none;
   left:-24px; bottom:-24px; width:64px; height:64px; border-radius:50%;
   background:rgba(15,39,64,.92) url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6C13 6.67 12.33 6 11.5 6S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.92-1.38z'/></svg>") center/36px no-repeat;
-  box-shadow:0 4px 14px rgba(0,0,0,.4); animation:tap-pulse2 1.3s ease-in-out infinite; }
+  box-shadow:0 4px 14px rgba(0,0,0,.4); animation:tap-pulse2 1.3s ease-in-out 4; }
 .methodbtn.method-used::after{ display:none; }
 @keyframes tap-pulse2{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.18); } }
 .modal{ position:absolute; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:200; }
@@ -346,6 +376,7 @@ body{
    card and the corner close button -- match its box width so the ✕ sits
    flush on the card's actual corner */
 #fb-modal .modal__box{ width:1352px; }
+#fb-modal-11 .modal__box{ width:1352px; }
 .modal__box iframe{ width:100%; height:1000px; border:0; display:block; background:transparent; }
 .modal__close{ position:absolute; left:-18px; top:-18px; width:54px; height:54px; border-radius:50%;
   background:#0f2740; color:#fff; border:3px solid #fff; font-size:26px; font-weight:800; cursor:pointer; }
@@ -382,7 +413,7 @@ body{
 .card::after{ content:''; position:absolute; z-index:6; pointer-events:none;
   left:50%; bottom:16px; transform:translateX(-50%); width:80px; height:80px; border-radius:50%;
   background:rgba(15,39,64,.9) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6C13 6.67 12.33 6 11.5 6S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.92-1.38z'/></svg>") center/46px no-repeat;
-  box-shadow:0 6px 18px rgba(0,0,0,.45); animation:tap-pulse 1.3s ease-in-out infinite; }
+  box-shadow:0 6px 18px rgba(0,0,0,.45); animation:tap-pulse 1.3s ease-in-out 4; }
 .card.is-flipped::after, .card.seen::after{ display:none; }
 @keyframes tap-pulse{
   0%,100%{ transform:translateX(-50%) scale(1); box-shadow:0 6px 18px rgba(0,0,0,.45); }
@@ -540,7 +571,7 @@ body{
 .navbtn--fwd{ left:24px;   top:935px; }
 .navbtn--back{ left:1780px; top:935px; }
 /* blink the forward arrow when it appears after a correct answer */
-.navbtn.nav-pulse{ animation:navpulse 1s ease-in-out infinite; }
+.navbtn.nav-pulse{ animation:navpulse 1s ease-in-out 3; }
 @keyframes navpulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.14); } }
 @media (prefers-reduced-motion: reduce){ .navbtn.nav-pulse{ animation:none; } }
 

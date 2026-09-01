@@ -723,6 +723,30 @@
     if (x) x.addEventListener('click', function () { m.hidden = true; });
   });
 
+  /* ---------- GLOSSARY TOOLTIPS (a link inline with a label's text toggles a short-definition bubble) ---------- */
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.gloss-link'));
+    function closeAll() {
+      links.forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+      Array.prototype.forEach.call(document.querySelectorAll('.gloss-tip'), function (t) { t.hidden = true; });
+    }
+    links.forEach(function (btn) {
+      var tip = btn.nextElementSibling;
+      if (!tip || !tip.classList.contains('gloss-tip')) return;
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var wasOpen = !tip.hidden;
+        closeAll();
+        if (!wasOpen) { tip.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
+      });
+    });
+    document.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('.gloss-link')) return;
+      closeAll();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
+  })();
+
   /* ---------- 4. END SCREEN ---------- */
   function showScore() {
     var el = document.getElementById('final-score');

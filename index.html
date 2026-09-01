@@ -33,7 +33,7 @@
   <section class="screen" data-screen="2">
     <div class="smeta" data-type="video" data-gate="video" aria-hidden="false" hidden></div>
     <div class="videoscreen">
-      <video class="video-el" src="assets/video/Chem1_Video1.mp4?v=4" playsinline preload="auto"></video>
+      <video class="video-el" src="assets/video/Chem1_Video1.mp4?v=5" playsinline preload="auto"></video>
       <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
       <div class="video-cap" data-vcap aria-live="polite"></div>
       <div class="vctrls" dir="ltr">
@@ -128,7 +128,7 @@
   <section class="screen" data-screen="4">
     <div class="smeta" data-type="video" data-gate="video" aria-hidden="true" hidden></div>
     <div class="videoscreen">
-      <video class="video-el" src="assets/video/Chem1_Video3.mp4?v=4" playsinline preload="auto"></video>
+      <video class="video-el" src="assets/video/Video3.mp4?v=1" playsinline preload="auto"></video>
       <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
       <div class="video-cap" data-vcap aria-live="polite"></div>
       <div class="vctrls" dir="ltr">
@@ -247,7 +247,7 @@
   <section class="screen" data-screen="10">
     <div class="smeta" data-type="video" data-gate="video" aria-hidden="true" hidden></div>
     <div class="videoscreen">
-      <video class="video-el" src="assets/video/Video4.mp4?v=4" playsinline preload="auto"></video>
+      <video class="video-el" src="assets/video/Chem1_Video4_Final.mp4?v=1" playsinline preload="auto"></video>
       <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
       <div class="video-cap" data-vcap aria-live="polite"></div>
       <div class="vctrls" dir="ltr">
@@ -262,15 +262,15 @@
       </div>
     </div>
     <!-- captions as live text (translation-safe); times in seconds. Empty span at 12.4 clears during the float beat -->
-    <div class="vcap-src" data-end="23.22" hidden>
-      <span data-t="0.0">יופי! הצוות סיים למדוד בשיטה זו את נפח הדגימות</span>
-      <span data-t="3.3">של סלע האנורתוזיט ושל סלע הבזלת מארה</span>
-      <span data-t="6.4">נעבור למדידת נפח סלע הבזלת הנקבובית.</span>
-      <span data-t="9.66">נוסיף את התוצאות לדוח הנתונים.</span>
-      <span data-t="12.88">דגימת הבזלת הנקבובית צפה על פני המים.</span>
-      <span data-t="16.42">אי אפשר למדוד כך את נפחה.</span>
-      <span data-t="18.48">נשתמש בשיטה עקיפה עם משקולת.</span>
-      <span data-t="20.74">אנחנו צריכים לבנות תהליך מדידה מבוקר.</span>
+    <div class="vcap-src" data-end="22.92" hidden>
+      <span data-t="0.0">יופי, הצוות סיים למדוד בשיטה זו את נפח הדגימות</span>
+      <span data-t="3.08">של סלע האנורתוזיט ושל סלע הבזלת מארה</span>
+      <span data-t="6.16">נוסיף את התוצאות לדוח הנתונים</span>
+      <span data-t="8.84">נעבור למדידת נפח סלע הבזלת הנקבובית.</span>
+      <span data-t="12.72">דגימת הבזלת הנקבובית צפה על פני המים</span>
+      <span data-t="15.78">אי אפשר למדוד כך את נפחה</span>
+      <span data-t="17.97">נשתמש בשיטה עקיפה עם משקולת</span>
+      <span data-t="20.52">אנחנו צריכים לבנות תהליך מדידה מבוקר</span>
     </div>
   </section>
 
@@ -280,6 +280,9 @@
     <img class="screen-bg" src="assets/images/bg-17.jpg"
          alt="שאלה 2א: גררו את שלבי מדידת הנפח לסדר הנכון">
     <ol class="qprogress" data-active="2" data-total="8" aria-label="התקדמות בשאלות" style="left:1266px; top:42px;"></ol>
+
+    <button class="methodbtn" type="button" data-modal="fb-modal-11">המחשה למדידת נפח<br>של גוף צף</button>
+
     <div class="qstem" style="left:511px; top:178px; width:1254px;">
       <h2>שאלה 2א:</h2>
       <p>עזרו לשירה וגל לסדר את שלבי תהליך מדידת הנפח של דגימת הבזלת הנקבובית.</p>
@@ -308,6 +311,14 @@
          style="left:398px; top:472px; width:600px; height:366px; bottom:auto; transform:none;" hidden>
       <p class="feedback__title"></p>
       <p class="feedback__body"></p>
+    </div>
+
+    <!-- method popup: floating-body applet -->
+    <div class="modal" id="fb-modal-11" hidden>
+      <div class="modal__box">
+        <button class="modal__close" type="button" aria-label="סגור">✕</button>
+        <iframe src="applets/floating-body.html?v=2" title="יישומון: נפח גוף צף" allowtransparency="true"></iframe>
+      </div>
     </div>
   </section>
 
@@ -449,15 +460,20 @@
         <p>לבזלת הזו יש המון חללים פנימיים.<br>במקרה כזה, נבחין בין שני מושגים:</p>
       </div>
     </div>
-    <!-- basalt figure (white-background rocks + arrows overlay); all words are live text around it -->
+    <!-- basalt figure (arrows/bracket overlay drawn first so the rock image paints over their tips) -->
+    <img class="diagram" src="assets/images/diagram-25-arrows.png?v=3" data-reveal data-reveal-order="1" alt=""
+         style="left:0; top:0; width:1920px; height:1080px;">
     <img class="diagram" src="assets/images/diagram-25-rocks-clean.png?v=1" data-reveal data-reveal-order="0"
          alt="שני סלעי בזלת נקבובית — סלע שלם וחתך שמראה את החללים הפנימיים"
          style="left:613px; top:467px; width:620px; height:275px;">
-    <img class="diagram" src="assets/images/diagram-25-arrows.png?v=1" data-reveal data-reveal-order="1" alt=""
-         style="left:468px; top:462px; width:915px; height:299px;">
     <div class="eq" data-reveal data-reveal-order="0" style="left:175px; top:290px; width:1580px;">נפח החומר המוצק <span class="k">+</span> נפח החללים <span class="k">=</span> <span class="b">נפח הגוף</span></div>
     <div class="dlabel" data-reveal data-reveal-order="1" style="left:225px; top:560px; width:300px;"><b>נפח הגוף</b>המקום שהגוף כולו תופס במרחב (כולל ה"חורים" והחללים שבתוכו).</div>
-    <div class="dlabel" data-reveal data-reveal-order="1" style="left:1405px; top:560px; width:300px;"><b>נפח החומר המוצק</b>המקום שתופס רק החומר הסלעי המוצק עצמו (ללא החללים).</div>
+    <div class="dlabel" data-reveal data-reveal-order="1" style="left:1405px; top:400px; width:300px;"><b>נפח החומר המוצק</b>המקום שתופס רק החומר הסלעי המוצק עצמו (ללא החללים).</div>
+    <div class="dlabel" data-reveal data-reveal-order="1" style="left:1405px; top:600px; width:300px;">
+      <b>נפח החללים</b>
+      <button type="button" class="gloss-link" aria-expanded="false">שימו לב שמרבית החללים בסלע פנימיים ומנותקים מהסביבה החיצונית. <span class="gloss-link__icon" aria-hidden="true">ⓘ</span></button>
+      <span class="gloss-tip" role="tooltip" hidden>כלומר, כשמשקיעים את הסלע במים, מים לא נכנסים אליהם.</span>
+    </div>
   </section>
 
   <!-- ===== SCREEN 26 — question Q4 ===== -->
@@ -474,7 +490,7 @@
     <ul class="options options--dots" role="radiogroup" aria-label="אפשרויות תשובה" style="left:120px; top:520px; width:936px;">
       <li class="option" role="radio" tabindex="0" data-value="1"><span class="dot"></span><span class="lbl">נפח הגוף השלם (35 מ"ל) - כי זה המקום שהדגימה כולה תופסת באחסון.</span></li>
       <li class="option" role="radio" tabindex="0" data-value="2"><span class="dot"></span><span class="lbl">נפח החומר הסלעי (28 מ"ל) - כי רק החומר המוצק חשוב.</span></li>
-      <li class="option" role="radio" tabindex="0" data-value="3"><span class="dot"></span><span class="lbl">נפח החללים (7 מ"ל) - כי צריך להשאיר מקום לאוויר.</span></li>
+      <li class="option" role="radio" tabindex="0" data-value="3"><span class="dot"></span><span class="lbl">נפח החללים שבסלע (7 מ"ל) - כי צריך להשאיר מקום לאוויר.</span></li>
       <li class="option" role="radio" tabindex="0" data-value="4"><span class="dot"></span><span class="lbl">ממוצע של שני הנתונים (31.5 מ"ל) - כדי להיות בטוחים.</span></li>
     </ul>
     <button class="btn--check check-btn" type="button" aria-label="בדיקה" hidden style="left:905px; top:800px; width:162px; height:106px;"><img src="assets/images/check-button.png" alt=""></button>
@@ -597,7 +613,7 @@
   <!-- ===== SCREEN 34 — dialogue (Gal finds the flask; Shira: need to calibrate) ===== -->
   <section class="screen" data-screen="21">
     <div class="smeta" data-type="content" data-gate="dialogue" aria-hidden="true" hidden></div>
-    <img class="screen-bg" src="assets/images/bg-34.png"
+    <img class="screen-bg" src="assets/images/bg-34-newer.jpg"
          alt="גל מציג בקבוק ארלנמאייר לשירה שאוחזת במשורה; שיחה על כיול">
     <div class="bubble" data-reveal data-reveal-order="0" style="left:0; top:0; width:1920px; height:1080px;">
       <img class="bubble__img" src="assets/images/bubble-34-gal1.png" alt="">
