@@ -855,16 +855,44 @@
     </div>
   </section>
 
+  <!-- ===== SCREEN 29 — closing video (Shira wrap-up + Gal + invitation); its own "סיימתי"
+       button appears once the video ends and just closes the unit -- no score/end-card. ===== -->
+  <section class="screen" data-screen="29">
+    <div class="smeta" data-type="video" data-gate="video" data-final aria-hidden="true" hidden></div>
+    <div class="videoscreen">
+      <video class="video-el" src="assets/video/Chem1_Videos_5.mp4?v=2" playsinline preload="auto"></video>
+      <button class="video-play" type="button" aria-label="נגן את הסרטון">▶</button>
+      <div class="video-cap" data-vcap aria-live="polite"></div>
+      <div class="vctrls" dir="ltr">
+        <button class="vc-btn" type="button" data-play aria-label="נגן או השהה">▶</button>
+        <span class="vc-time" data-cur>0:00</span>
+        <input class="vc-seek" type="range" min="0" max="1000" value="0" step="1" data-seek aria-label="סרגל התקדמות">
+        <span class="vc-time" data-dur>0:00</span>
+        <button class="vc-btn vc-cc" type="button" data-cc aria-pressed="true" aria-label="הצגת כתוביות">CC</button>
+        <button class="vc-btn" type="button" data-mute aria-label="השתקה">🔊</button>
+        <input class="vc-vol" type="range" min="0" max="100" value="100" step="1" data-vol aria-label="עוצמת שמע">
+        <button class="vc-btn" type="button" data-full aria-label="מסך מלא">⛶</button>
+      </div>
+      <button class="end-submit" type="button" data-submit hidden aria-label="סיימתי — סוגר את הלומדה"><img src="assets/images/end-button.png" alt="סיימתי"></button>
+    </div>
+    <!-- captions as live text (translation-safe); times in seconds -->
+    <div class="vcap-src" data-end="18.8" hidden>
+      <span data-t="0.0">מדדנו את נפח הדגימות וכעת נוכל להתאים להן</span>
+      <span data-t="2.48">את גודל המארזים. אך זהו רק חלק מהסיפור.</span>
+      <span data-t="5.12">אי אפשר לדעת מהי המסה רק לפי המקום שהחומר תופס.</span>
+      <span data-t="8.85">נכון ולמעבורת יש מגבלת מטען</span>
+      <span data-t="11.64">קריטית להמראה בטוחה מהירח.</span>
+      <span data-t="13.84">אתם מוזמנים להצטרף אלינו ללומדה הבאה.</span>
+      <span data-t="16.2">נמדוד את המסה ונשלים את תיעוד הנתונים.</span>
+    </div>
+  </section>
+
   <!-- navigation buttons -->
   <button id="nav-fwd" class="navbtn navbtn--fwd" type="button" aria-label="המשך">
     <img src="assets/images/nav-forward.png" alt="">
   </button>
   <button id="nav-back" class="navbtn navbtn--back" type="button" aria-label="חזרה">
     <img src="assets/images/nav-back.png" alt="">
-  </button>
-  <!-- shown in place of the forward arrow only on the last screen, once answered: closes the unit (no score UI) -->
-  <button id="nav-finish" class="navbtn navbtn--fwd" type="button" aria-label="סיום" hidden>
-    <img src="assets/images/end-button.png" alt="">
   </button>
 
 </div><!-- /stage -->

@@ -49,9 +49,8 @@
     var k = 0, iv = setInterval(function () { announce(); if (++k > 20 || acked) clearInterval(iv); }, 400);
   })();
 
-  var btnFwd    = document.getElementById('nav-fwd');    // forward = next (bottom-left, RTL)
-  var btnBack   = document.getElementById('nav-back');    // back = prev  (bottom-right)
-  var btnFinish = document.getElementById('nav-finish');  // shown instead of btnFwd on the last screen, once answered
+  var btnFwd  = document.getElementById('nav-fwd');   // forward = next (bottom-left, RTL)
+  var btnBack = document.getElementById('nav-back');   // back = prev  (bottom-right)
 
   var current = 0, score = 0, answered = {};
   var earned = 0;              // points earned (SCORM 0–100)
@@ -176,8 +175,6 @@
 
   if (btnFwd)  btnFwd.addEventListener('click', next);
   if (btnBack) btnBack.addEventListener('click', prev);
-  // finish: closes the unit (reports completion to the LMS/host) — no score screen, just closes
-  if (btnFinish) btnFinish.addEventListener('click', function () { btnFinish.disabled = true; showScore(); });
   document.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowLeft')  next();   // RTL: left = forward
     if (e.key === 'ArrowRight') prev();
@@ -192,18 +189,15 @@
                 (sc.getAttribute('data-gate') === 'video' && !sc._videoDone) ||
                 (sc.getAttribute('data-gate') === 'applet' && !sc._appletDone) ||
                 (sc.getAttribute('data-gate') === 'dialogue' && !sc._dialogueDone);
-    var isLast = (current === screens.length - 1);
     if (btnFwd) {
       // screens with their own start/continue button (e.g. the opening title
       // screen) hide the generic forward arrow entirely, so it never shows —
       // but it must stay enabled (not disabled) since that button proxies
       // its click to trigger the same "next" navigation
       var hideFwd = sc.hasAttribute('data-hide-fwd');
-      btnFwd.disabled = isLast || gated;
-      btnFwd.style.visibility = (gated || hideFwd || isLast) ? 'hidden' : 'visible';
+      btnFwd.disabled = (current === screens.length - 1) || gated;
+      btnFwd.style.visibility = (gated || hideFwd) ? 'hidden' : 'visible';
     }
-    // on the last screen, the finish button takes the forward arrow's place once answered
-    if (btnFinish) btnFinish.hidden = !(isLast && !gated);
   }
 
   /* ---------- 3. SINGLE-CHOICE QUESTION FLOW ----------
